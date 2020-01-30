@@ -21,8 +21,8 @@ class HomeController extends Controller
             "cover_images"=>"http://180.178.58.130/resource/image/castle.jpg",
             "is_original"=>0,
         ]);
-        value(json_decode($result,true));
-
+        var_dump(json_decode($result,true));
+exit;
         return $content
             ->title('Dashboard')
             ->description('Description...')
