@@ -11,5 +11,7 @@ Route::group([
 ], function (Router $router) {
 
     $router->get('/', 'HomeController@index')->name('admin.home');
-
+    $router->get('/task', 'TaskController@index');
+    $router->get('/video', 'VideoController@index');
+    $router->get('/account', 'AccountController@index');
 });
