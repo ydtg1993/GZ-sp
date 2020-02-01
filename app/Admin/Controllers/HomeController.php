@@ -16,8 +16,8 @@ class HomeController extends Controller
         $result = tool::curlRequest("http://baijiahao.baidu.com/builderinner/open/resource/video/publish",[
             "app_id"=>"1648637698438034",
             "app_token"=>"12105ee5e3532ed92011cf63ac23d007",
-            "title"=>"全明星首发！特雷杨内突外投无所不能",
-            "video_url"=>"http://180.178.58.130/resource/vedio/vv.mp4",
+            "title"=>"感人肺腑，科比哀悼仪式詹姆斯深情致辞",
+            "video_url"=>"http://180.178.58.130/resource/vedio/v4.mp4",
             "cover_images"=>"http://180.178.58.130/resource/image/t.jpg",
             "is_original"=>0,
         ]);
