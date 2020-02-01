@@ -16,9 +16,9 @@ class HomeController extends Controller
         $result = tool::curlRequest("http://baijiahao.baidu.com/builderinner/open/resource/video/publish",[
             "app_id"=>"1648637698438034",
             "app_token"=>"12105ee5e3532ed92011cf63ac23d007",
-            "title"=>"测测这个视频NNNNNNNNN",
-            "video_url"=>"http://180.178.58.130/resource/vedio/v2.mp4",
-            "cover_images"=>"http://180.178.58.130/resource/image/castle2.jpg",
+            "title"=>"测测这个视频一下",
+            "video_url"=>"http://180.178.58.130/resource/vedio/v3.mp4",
+            "cover_images"=>"http://180.178.58.130/resource/image/castle3.jpg",
             "is_original"=>0,
         ]);
         var_dump(json_decode($result,true));
