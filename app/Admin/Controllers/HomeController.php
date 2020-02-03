@@ -4,6 +4,9 @@ namespace App\Admin\Controllers;
 
 use App\Helper\tool;
 use App\Http\Controllers\Controller;
+use DenDroGram\Controller\AdjacencyList;
+use DenDroGram\Controller\DenDroGram;
+use DenDroGram\Controller\NestedSet;
 use Encore\Admin\Controllers\Dashboard;
 use Encore\Admin\Layout\Column;
 use Encore\Admin\Layout\Content;
@@ -16,13 +19,17 @@ class HomeController extends Controller
         $result = tool::curlRequest("http://baijiahao.baidu.com/builderinner/open/resource/video/publish",[
             "app_id"=>"1648637698438034",
             "app_token"=>"12105ee5e3532ed92011cf63ac23d007",
-            "title"=>"感人肺腑，科比哀悼仪式詹姆斯深情致辞",
-            "video_url"=>"http://180.178.58.130/resource/vedio/v4.mp4",
+            "title"=>"40分三双！哈登面对鹈鹕砍下40分10篮板9助攻",
+            "video_url"=>"http://180.178.58.130/resource/vedio/v6.mp4",
             "cover_images"=>"http://180.178.58.130/resource/image/t.jpg",
             "is_original"=>0,
         ]);
         var_dump(json_decode($result,true));
 exit;
+
+        echo (new DenDroGram(AdjacencyList::class))->buildCatalog(1);exit;
+        echo (new DenDroGram(NestedSet::class))->buildCatalog(1);
+        exit;
         return $content
             ->title('Dashboard')
             ->description('Description...')
