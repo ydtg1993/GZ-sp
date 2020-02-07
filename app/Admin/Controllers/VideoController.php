@@ -5,6 +5,8 @@ namespace App\Admin\Controllers;
 use App\Model\CategoryModel;
 use App\Model\TaskModel;
 use App\Model\VideoModel;
+use DenDroGram\Controller\AdjacencyList;
+use DenDroGram\Controller\DenDroGram;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
@@ -163,7 +165,22 @@ EOF;
         $form->display('title','标题');
         $form->display('author', __('作者'));
         $form->display('resource', __('资源路径'));
+        $form->hidden('category','');
+        $data = VideoModel::where('id',$id)->first();
+        $select = (new DenDroGram(AdjacencyList::class))->buildSelect(1,'name','value',[$data->type1,$data->type2]);
+        $style = '<style>.dendrogram-select-dropdown{max-height: 240px;overflow-y: auto}</style>';
+        $script = <<<EOF
+        <script>
+        var dom = document.getElementsByClassName('category')[0];
+        dom.value = dendrogramUS.storage();
+        dendrogramUS.callback = function() {
+            var data = dendrogramUS.storage();
+            dom.value = data;
+        };
+        </script>
+EOF;
 
+        $form->html($select.$style.$script, '分类标签');
 
         $form->display('created_at', __('Created At'));
         $form->display('updated_at', __('Updated At'));
