@@ -102,7 +102,7 @@ class TaskController extends AdminController
         $form->number('time','间隔时间(小时)')->min(1)->default(1);
 
         $form->hidden('category','');
-        $select = (new DenDroGram(AdjacencyList::class))->buildSelect(2275);
+        $select = (new DenDroGram(AdjacencyList::class))->buildSelect(1);
         $script = <<<EOF
         <script>dendrogramUS.callback = function() {
             var data = dendrogramUS.storage();

@@ -27,7 +27,6 @@ class HomeController extends Controller
         ]);
         var_dump(json_decode($result,true));
 exit;*/
-        echo (new DenDroGram(AdjacencyList::class))->buildCatalog(1,config('app.url').'/api/cat',['name']);exit;
         return $content
             ->title('Dashboard')
             ->description('Description...')
