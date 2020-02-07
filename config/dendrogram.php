@@ -9,7 +9,7 @@
 
 return [
     //视图默认以展开形式
-    'expand' => false,
+    'expand' => true,
 
     //adjacency默认表名
     'adjacency_table'=>'category',
