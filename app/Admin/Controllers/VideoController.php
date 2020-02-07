@@ -24,7 +24,7 @@ class VideoController extends AdminController
     {
         $grid = new Grid(new VideoModel);
         $grid->column('id', __('ID'))->sortable();
-        $grid->column('title', '标题');
+        $grid->column('title', '标题')->style('width:150px');
         $grid->column('author', '作者');
         $grid->column('avatar')->image();
         $grid->column('type1', '类型1');
