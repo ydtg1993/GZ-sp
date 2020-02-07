@@ -31,9 +31,14 @@ class VideoController extends AdminController
         $grid->column('title', '标题')->style('width:150px');
         $grid->column('author', '作者');
         $grid->column('avatar')->image();
-        $grid->column('type1', '类型1');
-        $grid->column('type2', '类型2');
-
+        $grid->column('type1', '类型1')->display(function ($type) {
+            $category = CategoryModel::where('id',$type)->first();
+            return $category->name;
+        });
+        $grid->column('type2', '类型2')->display(function ($type) {
+            $category = CategoryModel::where('id',$type)->first();
+            return $category->name;
+        });
         $grid->disableCreateButton();
         $grid->disableExport();
         $grid->disableRowSelector();
@@ -41,6 +46,10 @@ class VideoController extends AdminController
             // 去掉默认的id过滤器
             $filter->disableIdFilter();
             $filter->between('created_at', '创建时间')->datetime();
+        });
+        $grid->actions(function ($actions) {
+            // 去掉查看
+            $actions->disableView();
         });
         return $grid;
     }
