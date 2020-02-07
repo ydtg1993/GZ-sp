@@ -9,7 +9,7 @@
     "license": "MIT",
     "require": {
         "php": "^7.2",
-        "dendrogram/dendrogram": "v1.3",
+        "dendrogram/dendrogram": "v2.0",
         "encore/laravel-admin": "^1.7",
         "fideloper/proxy": "^4.0",
         "laravel/framework": "^6.2",
