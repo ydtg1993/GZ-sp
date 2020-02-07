@@ -6,6 +6,7 @@ use App\Model\CategoryModel;
 use App\Model\TaskModel;
 use App\Model\VideoModel;
 use Encore\Admin\Controllers\AdminController;
+use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Layout\Content;
 use Encore\Admin\Show;
@@ -47,10 +48,6 @@ class VideoController extends AdminController
             $filter->disableIdFilter();
             $filter->between('created_at', '创建时间')->datetime();
         });
-        $grid->actions(function ($actions) {
-            // 去掉查看
-            $actions->disableView();
-        });
         return $grid;
     }
 
@@ -80,6 +77,7 @@ class VideoController extends AdminController
         $show = new Show(VideoModel::findOrFail($id));
 
         $show->id('ID');
+        $show->title('标题');
         $show->task_id('任务')->unescape()->as(function ($task_id) {
             $task = TaskModel::where('id',$task_id)->first();
             $task_type = $task->task_type == 0 ? '单任务':'定时任务';
@@ -135,5 +133,60 @@ EOF;
         $show->updated_at('Updated at');
 
         return $show;
+    }
+
+    /**
+     * Edit interface.
+     *
+     * @param mixed $id
+     * @param Content $content
+     * @return Content
+     */
+    public function edit($id, Content $content)
+    {
+        return $content
+            ->header('视频')
+            ->description('视频操作')
+            ->body($this->form($id)->edit($id));
+    }
+
+    /**
+     * Make a form builder.
+     *
+     * @return Form
+     */
+    protected function form($id)
+    {
+        $form = new Form(new VideoModel());
+
+        $form->display('id', __('ID'));
+        $form->display('title','标题');
+        $form->display('author', __('作者'));
+        $form->display('resource', __('资源路径'));
+
+
+        $form->display('created_at', __('Created At'));
+        $form->display('updated_at', __('Updated At'));
+
+        $form->tools(function (Form\Tools $tools) {
+            // 去掉`列表`按钮
+            $tools->disableList();
+            // 去掉`删除`按钮
+            $tools->disableDelete();
+            // 去掉`查看`按钮
+            $tools->disableView();
+        });
+        $form->footer(function ($footer) {
+            // 去掉`重置`按钮
+            $footer->disableReset();
+            // 去掉`查看`checkbox
+            $footer->disableViewCheck();
+            // 去掉`继续编辑`checkbox
+            $footer->disableEditingCheck();
+            // 去掉`继续创建`checkbox
+            $footer->disableCreatingCheck();
+
+        });
+        return $form;
     }
 }
