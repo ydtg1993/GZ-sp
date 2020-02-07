@@ -95,6 +95,12 @@ class TaskController extends AdminController
     {
         $form = new Form(new TaskModel());
 
+        $form->saving(function (Form $form) {
+            $category = $form->category;
+            dd($category);
+        });
+        $form->ignore(['category']);
+
         $form->display('id', __('ID'));
         $form->select('task_type','任务类型')->options([0 => '单个视频', 1 => '定时任务']);
         $form->text('account','yutuber账户');
@@ -103,6 +109,7 @@ class TaskController extends AdminController
 
         $form->hidden('category','');
         $select = (new DenDroGram(AdjacencyList::class))->buildSelect(1);
+        $style = '<style>.dendrogram-select-dropdown{max-height: 240px;overflow-y: auto}</style>';
         $script = <<<EOF
         <script>dendrogramUS.callback = function() {
             var data = dendrogramUS.storage();
@@ -111,7 +118,7 @@ class TaskController extends AdminController
         };</script>
 EOF;
 
-        $form->html($select.$script, '分类标签');
+        $form->html($select.$style.$script, '分类标签');
         $form->display('created_at', __('Created At'));
         $form->display('updated_at', __('Updated At'));
 
