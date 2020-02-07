@@ -11,12 +11,13 @@ use Encore\Admin\Controllers\Dashboard;
 use Encore\Admin\Layout\Column;
 use Encore\Admin\Layout\Content;
 use Encore\Admin\Layout\Row;
+use Illuminate\Support\Facades\DB;
 
 class HomeController extends Controller
 {
     public function index(Content $content)
     {
-        $result = tool::curlRequest("http://baijiahao.baidu.com/builderinner/open/resource/video/publish",[
+        /*$result = tool::curlRequest("http://baijiahao.baidu.com/builderinner/open/resource/video/publish",[
             "app_id"=>"1648637698438034",
             "app_token"=>"12105ee5e3532ed92011cf63ac23d007",
             "title"=>"鹈鹕鹈鹕鹈鹕鹈鹕鹈鹕鹈鹕",
@@ -25,11 +26,8 @@ class HomeController extends Controller
             "is_original"=>0,
         ]);
         var_dump(json_decode($result,true));
-exit;
-
-        echo (new DenDroGram(AdjacencyList::class))->buildCatalog(1);exit;
-        echo (new DenDroGram(NestedSet::class))->buildCatalog(1);
-        exit;
+exit;*/
+        echo (new DenDroGram(AdjacencyList::class))->buildCatalog(1,config('app.url').'/api/cat',['name']);exit;
         return $content
             ->title('Dashboard')
             ->description('Description...')

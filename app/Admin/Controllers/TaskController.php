@@ -2,8 +2,12 @@
 
 namespace App\Admin\Controllers;
 
+use App\Model\AccountModel;
 use App\Model\TaskModel;
+use DenDroGram\Controller\AdjacencyList;
+use DenDroGram\Controller\DenDroGram;
 use Encore\Admin\Controllers\AdminController;
+use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Layout\Content;
 
@@ -24,10 +28,6 @@ class TaskController extends AdminController
     protected function grid()
     {
         $grid = new Grid(new TaskModel);
-        $grid->header(function ($query) {
-            return $this->operateGrid();
-        });
-
         $grid->column('id', __('ID'))->sortable();
         $grid->column('task_type', '任务类型')->display(function ($type) {
             if($type==0){
@@ -50,7 +50,6 @@ class TaskController extends AdminController
         $grid->column('created_at', '创建时间');
         $grid->column('updated_at', '修改时间');
 
-        $grid->disableCreateButton();
         $grid->disableExport();
         $grid->disableRowSelector();
         $grid->filter(function ($filter) {
@@ -75,20 +74,47 @@ class TaskController extends AdminController
      */
     public function create(Content $content)
     {
+        $form = new Form(new TaskModel());
+        $form->tools(function (Form\Tools $tools) {
+            $tools->disableList();
+            $tools->disableDelete();
+            $tools->disableView();
+        });
         return $content
-            ->header('创建')
-            ->description('创建订单')
+            ->header('创建任务')
+            ->description('创建任务')
             ->body($this->form());
     }
 
-    public function operateGrid()
+    /**
+     * Make a form builder.
+     *
+     * @return Form
+     */
+    protected function form()
     {
-        return <<<EOF
-    <h3 class="hello">ffffff</h3>
-<script>$('.hello').click(function() {
-  alert('hello')
-})</script>
+        $form = new Form(new TaskModel());
+
+        $form->display('id', __('ID'));
+        $form->select('task_type','任务类型')->options([0 => '单个视频', 1 => '定时任务']);
+        $form->text('account','yutuber账户');
+        $form->url('url','目标地址');
+        $form->number('time','间隔时间(小时)')->min(1)->default(1);
+
+        $form->hidden('category','');
+        $select = (new DenDroGram(AdjacencyList::class))->buildSelect(2275);
+        $script = <<<EOF
+        <script>dendrogramUS.callback = function() {
+            var data = dendrogramUS.storage();
+            var dom = document.getElementsByClassName('category')[0]
+            dom.value = data;
+        };</script>
 EOF;
 
+        $form->html($select.$script, '分类标签');
+        $form->display('created_at', __('Created At'));
+        $form->display('updated_at', __('Updated At'));
+
+        return $form;
     }
 }
