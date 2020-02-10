@@ -40,7 +40,7 @@ class VideoController extends AdminController
         });
         $grid->column('type2', '类型2')->display(function ($type) {
             $category = CategoryModel::where('id',$type)->first();
-            return $category->name;
+            return $category ? $category->name : '';
         });
         $grid->disableCreateButton();
         $grid->disableExport();
