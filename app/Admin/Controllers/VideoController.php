@@ -171,6 +171,15 @@ EOF;
 
         if($id) {
             $data = VideoModel::where('id', $id)->first();
+            $source = config('app.url').'/'.$data->resource;
+            $video = <<<EOF
+<video width="320" height="240" controls>
+    <source src="{$source}" type="video/mp4">
+    <source src="movie.ogg" type="video/ogg">
+</video>
+EOF;
+            $form->html($video, '视频展示');
+
             $select = (new DenDroGram(AdjacencyList::class))->buildSelect(1, 'name', 'id', [$data->type1, $data->type2]);
             $style = '<style>.dendrogram-select-dropdown{max-height: 240px;overflow-y: auto}</style>';
             $script = <<<EOF
