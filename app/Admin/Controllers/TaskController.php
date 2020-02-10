@@ -30,6 +30,7 @@ class TaskController extends AdminController
     protected function grid()
     {
         $grid = new Grid(new TaskModel);
+        $grid->model()->orderBy('created_at','desc');
         $grid->column('id', __('ID'))->sortable();
         $grid->column('task_type', '任务类型')->display(function ($type) {
             if($type==0){
