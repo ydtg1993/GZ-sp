@@ -40,11 +40,13 @@ class TaskController extends AdminController
         $grid->column('status', '任务状态')->using([
             0=> '待处理',
             1 => '采集中',
-            2 => '已成功',
+            2 => '采集失败',
+            3 => '采集完成'
         ])->dot([
-            0=> 'warning',
+            0=> 'default',
             1 => 'danger',
-            2 => 'success',
+            2 => 'warning',
+            3 => 'success',
         ]);
         $grid->column('url', '采集地址')->link()->style('width:200px');
         $grid->column('time', '采集时间');
