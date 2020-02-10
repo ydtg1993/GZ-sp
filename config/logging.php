@@ -99,6 +99,13 @@ return [
         'emergency' => [
             'path' => storage_path('logs/laravel.log'),
         ],
+
+        'createTask' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/task/error.log'),
+            'level' => 'info',
+            'days' => 30,
+        ],
     ],
 
 ];

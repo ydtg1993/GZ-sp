@@ -11,6 +11,7 @@ use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Layout\Content;
+use Illuminate\Support\Facades\Log;
 
 class TaskController extends AdminController
 {
@@ -110,6 +111,7 @@ class TaskController extends AdminController
             ]);
             $result = json_decode($result,true);
             if(!isset($result['status']) || $result['status'] != 0){
+                Log::channel('createTask')->info('任务失败', $result);
                 TaskModel::where('id',$id)->update(['status'=>4]);
             }
         });
