@@ -42,6 +42,20 @@ class VideoController extends AdminController
             $category = CategoryModel::where('id',$type)->first();
             return $category->name;
         });
+        $grid->column('publish_status1', '养号发布')->using([
+            0=> '待发布',
+            1 => '已发布'
+        ])->dot([
+            0 => 'default',
+            1 => 'success',
+        ]);
+        $grid->column('publish_status2', '推广发布')->using([
+            0=> '待发布',
+            1 => '已发布'
+        ])->dot([
+            0 => 'default',
+            1 => 'success',
+        ]);
         $grid->disableCreateButton();
         $grid->disableExport();
         $grid->disableRowSelector();
