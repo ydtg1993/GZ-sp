@@ -111,7 +111,7 @@ class TaskController extends AdminController
             ]),["Content-type: application/json;charset='utf-8'"]);
             $result = json_decode($result,true);
             if(!isset($result['status']) || $result['status'] != 0){
-                Log::channel('createTask')->info('任务失败', $result);
+                Log::channel('createTask')->info('任务失败', json_decode($result,true));
                 TaskModel::where('id',$id)->update(['status'=>4]);
             }
         });
