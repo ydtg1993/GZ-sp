@@ -106,10 +106,11 @@ class TaskController extends AdminController
 
         $form->saved(function (Form $form) {
             $id = $form->model()->id;
-            $result = tool::curlRequest("http://172.18.61.41:8002/api/video/download/",json_encode([
+            $result = tool::curlRequest(config('app.url').":8002/api/video/download/",json_encode([
                 'task_id'=>$id,
             ]),["Content-type: application/json;charset='utf-8'"]);
             $result = (array)json_decode($result,true);
+            dd($result);
             if(!isset($result['status']) || $result['status'] != 0){
                 Log::channel('createTask')->info('任务失败', $result);
                 TaskModel::where('id',$id)->update(['status'=>4]);
