@@ -164,6 +164,7 @@ EOF;
         $form->display('id', __('ID'));
         $form->display('title','标题');
         $form->display('author', __('作者'));
+        $form->image('avatar','封面')->uniqueName();
         $form->display('resource', __('资源路径'));
         $form->hidden('type1','');
         $form->hidden('type2','');

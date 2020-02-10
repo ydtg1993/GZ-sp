@@ -2,6 +2,7 @@
 
 namespace App\Admin\Controllers;
 
+use App\Helper\tool;
 use App\Model\AccountModel;
 use App\Model\TaskModel;
 use DenDroGram\Controller\AdjacencyList;
@@ -102,6 +103,17 @@ class TaskController extends AdminController
     {
         $form = new Form(new TaskModel());
 
+        $form->saved(function (Form $form) {
+            $id = $form->model()->id;
+            $result = tool::curlRequest("http://172.18.61.41:8002/api/video/download/",[
+                'task_id'=>$id,
+            ]);
+            $result = json_decode($result,true);
+            if(!isset($result['status']) || $result['status'] != 0){
+                TaskModel::where('id',$id)->update(['status'=>4]);
+            }
+        });
+
         $form->display('id', __('ID'));
         $form->select('task_type','任务类型')->options([0 => '单个视频', 1 => '定时任务']);
         $form->text('account','yutuber账户');
@@ -122,7 +134,7 @@ class TaskController extends AdminController
         </script>
 EOF;
 
-        $form->html($select.$style.$script, '分类标签');
+        $form->html($select.$style.$script, '分类');
         $form->display('created_at', __('Created At'));
         $form->display('updated_at', __('Updated At'));
 
