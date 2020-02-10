@@ -1,2 +1,2 @@
 #/bin/bash
-sudo supervisorctl stop bjhmedia:uwsgi
+supervisorctl stop bjhmedia:uwsgi
