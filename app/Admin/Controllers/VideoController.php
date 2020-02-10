@@ -50,6 +50,10 @@ class VideoController extends AdminController
             $filter->disableIdFilter();
             $filter->between('created_at', '创建时间')->datetime();
         });
+        $grid->actions(function ($actions) {
+            // 去掉删除
+            $actions->disableDelete();
+        });
         return $grid;
     }
 

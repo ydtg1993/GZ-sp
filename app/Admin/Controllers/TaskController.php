@@ -66,6 +66,9 @@ class TaskController extends AdminController
             $filter->between('created_at', '创建时间')->datetime();
         });
         $grid->actions(function ($actions) {
+            // 去掉删除
+            $actions->disableDelete();
+
             // 去掉编辑
             $actions->disableEdit();
 
