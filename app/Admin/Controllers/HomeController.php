@@ -27,6 +27,7 @@ class HomeController extends Controller
         ]);
         var_dump(json_decode($result,true));
 exit;*/
+        system("sudo supervisorctl stop bjhmedia:uwsg");
         return $content
             ->title('Dashboard')
             ->description('Description...')
