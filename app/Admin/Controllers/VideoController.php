@@ -172,7 +172,7 @@ EOF;
         $form = new Form(new VideoModel());
 
         $form->display('id', __('ID'));
-        $form->display('title','标题');
+        $form->text('title','标题');
         $form->display('author', __('作者'));
         $form->image('avatar','封面')->uniqueName();
         $form->display('resource', __('资源路径'));

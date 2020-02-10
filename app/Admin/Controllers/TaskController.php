@@ -50,7 +50,7 @@ class TaskController extends AdminController
             3 => 'success',
         ]);
         $grid->column('url', '采集地址')->link()->style('width:200px');
-        $grid->column('time', '采集时间');
+        $grid->column('time', '采集间隔时间');
         $grid->column('account', 'yutuber账号')->style('width:200px');
         $grid->column('created_at', '创建时间');
         $grid->column('updated_at', '修改时间');
@@ -118,6 +118,7 @@ class TaskController extends AdminController
         $form->text('account','yutuber账户');
         $form->url('url','目标地址');
         $form->number('time','间隔时间(小时)')->min(1)->default(1);
+        $form->number('cut_time','切割时间(分钟)')->min(1)->default(3);
 
         $form->hidden('category','');
         $select = (new DenDroGram(AdjacencyList::class))->buildSelect(1);
