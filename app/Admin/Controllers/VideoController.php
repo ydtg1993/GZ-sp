@@ -34,14 +34,6 @@ class VideoController extends AdminController
         $grid->column('title', '标题')->style('width:150px');
         $grid->column('author', '作者');
         $grid->column('avatar')->image();
-        $grid->column('type1', '类型1')->display(function ($type) {
-            $category = CategoryModel::where('id',$type)->first();
-            return $category->name;
-        });
-        $grid->column('type2', '类型2')->display(function ($type) {
-            $category = CategoryModel::where('id',$type)->first();
-            return $category->name;
-        });
         $grid->column('publish_status1', '养号发布')->using([
             0=> '待发布',
             1 => '已发布'
