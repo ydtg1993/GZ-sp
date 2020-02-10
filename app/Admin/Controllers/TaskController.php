@@ -106,9 +106,9 @@ class TaskController extends AdminController
 
         $form->saved(function (Form $form) {
             $id = $form->model()->id;
-            $result = tool::curlRequest("http://172.18.61.41:8002/api/video/download/",[
+            $result = tool::curlRequest("http://172.18.61.41:8002/api/video/download/",json_encode([
                 'task_id'=>$id,
-            ]);
+            ]),["Content-type: application/json;charset='utf-8'"]);
             $result = json_decode($result,true);
             if(!isset($result['status']) || $result['status'] != 0){
                 Log::channel('createTask')->info('任务失败', $result);
