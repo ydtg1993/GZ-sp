@@ -108,7 +108,7 @@ class VideoController extends AdminController
         <td>{$task_type}</td>
         <td>{$task_status}</td>
         <td>$task->account</td>
-        <td><a href="{$task->url}">地址</a></td>
+        <td><a href="{$task->url}" target="_BLANK">地址</a></td>
         <td></td>
     </tr>
 </table>
@@ -129,7 +129,13 @@ EOF;
             return $result;
         });
         $show->resource()->unescape()->as(function ($resource) {
-            return $resource;
+            $source = config('app.url').'/'.$resource;
+            return <<<EOF
+<video width="450" height="300" controls>
+    <source src="{$source}" type="video/mp4">
+    <source src="movie.ogg" type="video/ogg">
+</video>
+EOF;
         });
         $show->created_at('Created at');
         $show->updated_at('Updated at');
@@ -173,7 +179,7 @@ EOF;
             $data = VideoModel::where('id', $id)->first();
             $source = config('app.url').'/'.$data->resource;
             $video = <<<EOF
-<video width="320" height="240" controls>
+<video width="450" height="300" controls>
     <source src="{$source}" type="video/mp4">
     <source src="movie.ogg" type="video/ogg">
 </video>
