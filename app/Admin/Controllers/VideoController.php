@@ -195,24 +195,6 @@ EOF;
 </video>
 EOF;
             $form->html($video, '视频展示');
-
-            $select = (new DenDroGram(AdjacencyList::class))->buildSelect(1, 'name', 'id', [$data->type1, $data->type2]);
-            $style = '<style>.dendrogram-select-dropdown{max-height: 240px;overflow-y: auto}</style>';
-            $script = <<<EOF
-        <script>
-        var dom1 = document.getElementsByClassName('type1')[0];
-        var dom2 = document.getElementsByClassName('type2')[0];
-        var v = dendrogramUS.storage();
-        dom1.value = v[0];
-        dom2.value = v[1];
-        dendrogramUS.callback = function() {
-            var data = dendrogramUS.storage();
-            dom1.value = data[0];
-            dom2.value = data[1];
-        };
-        </script>
-EOF;
-            $form->html($select . $style . $script, '分类标签');
         }
 
         $form->display('created_at', __('Created At'));

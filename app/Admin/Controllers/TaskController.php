@@ -121,20 +121,7 @@ class TaskController extends AdminController
         $form->number('cut_time','切割时间(分钟)')->min(1)->default(3);
 
         $form->hidden('category','');
-        $select = (new DenDroGram(AdjacencyList::class))->buildSelect(1);
-        $style = '<style>.dendrogram-select-dropdown{max-height: 240px;overflow-y: auto}</style>';
-        $script = <<<EOF
-        <script>
-        var dom = document.getElementsByClassName('category')[0];
-        dom.value = dendrogramUS.storage();
-        dendrogramUS.callback = function() {
-            var data = dendrogramUS.storage();
-            dom.value = data;
-        };
-        </script>
-EOF;
 
-        $form->html($select.$style.$script, '分类');
         $form->display('created_at', __('Created At'));
         $form->display('updated_at', __('Updated At'));
 
