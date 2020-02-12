@@ -340,10 +340,10 @@ EOF;
     {
         $video = VideoModel::where('id',$id)->first();
         if(file_exists(BASE_PATH.$video->resource)) {
-            unlink(BASE_PATH . $video->resource);
+            @unlink(BASE_PATH . $video->resource);
         }
         if(file_exists(BASE_PATH . $video->resource2)) {
-            unlink(BASE_PATH . $video->resource2);
+            @unlink(BASE_PATH . $video->resource2);
         }
         if($this->form()->destroy($id)){
             return response()->json([
