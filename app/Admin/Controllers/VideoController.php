@@ -62,10 +62,6 @@ class VideoController extends AdminController
             $filter->disableIdFilter();
             $filter->between('created_at', '创建时间')->datetime();
         });
-        $grid->actions(function ($actions) {
-            // 去掉删除
-            $actions->disableDelete();
-        });
         return $grid;
     }
 
@@ -210,7 +206,7 @@ $('#publish').click(function() {
             if(d.status == 0){
                 window.location.href = '{$publishReturn}';
             }else {
-                alert(d.message);
+                admin_toastr(d.message, 'error');
             }
         }
     })
@@ -338,5 +334,14 @@ EOF;
 
         });
         return $form;
+    }
+
+    public function destroy($id)
+    {
+        $video = VideoModel::where('id',$id)->first();
+        $root = '/server/www/GZ-sp/public/';
+        unlink($root.$video->resource);
+        unlink($root.$video->resource2);
+        $this->form()->destroy($id);
     }
 }
