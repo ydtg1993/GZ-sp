@@ -340,8 +340,8 @@ EOF;
     {
         $video = VideoModel::where('id',$id)->first();
         $root = '/server/www/GZ-sp/public/';
-        unlink($root.$video->resource);
-        unlink($root.$video->resource2);
+        //unlink($root.$video->resource);
+        //unlink($root.$video->resource2);
         if($this->form()->destroy($id)){
             return response()->json([
                 'status'  => true,
