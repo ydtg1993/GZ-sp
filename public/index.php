@@ -8,7 +8,7 @@
  */
 
 define('LARAVEL_START', microtime(true));
-
+define('BASE_PATH',str_replace('\\','/',realpath(dirname(__FILE__).'/'))."/");
 /*
 |--------------------------------------------------------------------------
 | Register The Auto Loader

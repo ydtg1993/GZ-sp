@@ -339,9 +339,8 @@ EOF;
     public function destroy($id)
     {
         $video = VideoModel::where('id',$id)->first();
-        $root = '/server/www/GZ-sp/public/';
-        //unlink($root.$video->resource);
-        //unlink($root.$video->resource2);
+        unlink(BASE_PATH.$video->resource);
+        unlink(BASE_PATH.$video->resource2);
         if($this->form()->destroy($id)){
             return response()->json([
                 'status'  => true,
