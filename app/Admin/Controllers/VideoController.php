@@ -339,8 +339,12 @@ EOF;
     public function destroy($id)
     {
         $video = VideoModel::where('id',$id)->first();
-        unlink(BASE_PATH.$video->resource);
-        unlink(BASE_PATH.$video->resource2);
+        if(is_file(BASE_PATH.$video->resource)) {
+            unlink(BASE_PATH . $video->resource);
+        }
+        if(is_file(BASE_PATH . $video->resource2)) {
+            unlink(BASE_PATH . $video->resource2);
+        }
         if($this->form()->destroy($id)){
             return response()->json([
                 'status'  => true,
