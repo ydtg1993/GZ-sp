@@ -340,8 +340,8 @@ EOF;
     {
         $video = VideoModel::where('id',$id)->first();
         if(file_exists(BASE_PATH.$video->resource)) {
-            chmod(BASE_PATH . $video->resource,0777);
-            @unlink(BASE_PATH . $video->resource);
+            //chmod(BASE_PATH . $video->resource,0777);
+            //@unlink(BASE_PATH . $video->resource);
             return response()->json([
                 'status'  => true,
                 'message' => BASE_PATH . $video->resource,
