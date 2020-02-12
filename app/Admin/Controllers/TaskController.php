@@ -120,7 +120,7 @@ class TaskController extends AdminController
         $form->number('time','间隔时间(小时)')->min(1)->default(1);
         $form->number('cut_time','切割时间(分钟)')->min(1)->default(3);
 
-        $form->hidden('category','')->default('');
+        $form->hidden('category','')->default(' ');
 
         $form->display('created_at', __('Created At'));
         $form->display('updated_at', __('Updated At'));
