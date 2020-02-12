@@ -101,6 +101,7 @@ class TaskController extends AdminController
     {
         $form = new Form(new TaskModel());
 
+        $form->ignore('category');
         $form->saved(function (Form $form) {
             $id = $form->model()->id;
             $result = tool::curlRequest(config('app.url').":8002/api/video/download/",json_encode([
@@ -119,8 +120,6 @@ class TaskController extends AdminController
         $form->url('url','目标地址');
         $form->number('time','间隔时间(小时)')->min(1)->default(1);
         $form->number('cut_time','切割时间(分钟)')->min(1)->default(3);
-
-        $form->hidden('category','')->default(' ');
 
         $form->display('created_at', __('Created At'));
         $form->display('updated_at', __('Updated At'));
