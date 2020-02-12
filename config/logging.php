@@ -106,6 +106,13 @@ return [
             'level' => 'info',
             'days' => 30,
         ],
+
+        'publish' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/publish/error.log'),
+            'level' => 'info',
+            'days' => 30,
+        ],
     ],
 
 ];

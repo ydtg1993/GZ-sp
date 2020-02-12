@@ -17,6 +17,7 @@ use Encore\Admin\Grid;
 use Encore\Admin\Layout\Content;
 use Encore\Admin\Show;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class VideoController extends AdminController
 {
@@ -259,6 +260,7 @@ EOF;
                 );
                 $result = (array)json_decode($result, true);
                 if($result !== 0){
+                    Log::channel('publish')->info('推送失败', $result);
                     continue;
                 }
                 PublishModel::insert([
