@@ -342,6 +342,12 @@ EOF;
         $root = '/server/www/GZ-sp/public/';
         unlink($root.$video->resource);
         unlink($root.$video->resource2);
-        $this->form()->destroy($id);
+        if($this->form()->destroy($id)){
+            return response()->json([
+                'status'  => true,
+                'message' => '成功',
+            ]);
+        };
+
     }
 }
