@@ -13,5 +13,7 @@ Route::group([
     $router->get('/', 'HomeController@index')->name('admin.home');
     $router->resource('/task', 'TaskController');
     $router->resource('/video', 'VideoController');
+    $router->get('/publish/{id}','VideoController@publish');
+    $router->post('/publishToBj','VideoController@publishToBj');
     $router->resource('/account', 'AccountController');
 });
