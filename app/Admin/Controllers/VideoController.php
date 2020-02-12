@@ -340,13 +340,11 @@ EOF;
     {
         $video = VideoModel::where('id',$id)->first();
         if(is_file(BASE_PATH.$video->resource)) {
-            return response()->json([
-                'status'  => true,
-                'message' => BASE_PATH . $video->resource,
-            ]);
+            chmod(BASE_PATH . $video->resource,0777);
             unlink(BASE_PATH . $video->resource);
         }
         if(is_file(BASE_PATH . $video->resource2)) {
+            chmod(BASE_PATH . $video->resource2,0777);
             unlink(BASE_PATH . $video->resource2);
         }
         if($this->form()->destroy($id)){
