@@ -340,6 +340,10 @@ EOF;
     {
         $video = VideoModel::where('id',$id)->first();
         if(is_file(BASE_PATH.$video->resource)) {
+            return response()->json([
+                'status'  => true,
+                'message' => BASE_PATH . $video->resource,
+            ]);
             unlink(BASE_PATH . $video->resource);
         }
         if(is_file(BASE_PATH . $video->resource2)) {
