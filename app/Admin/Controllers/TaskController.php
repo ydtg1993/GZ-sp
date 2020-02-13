@@ -3,10 +3,7 @@
 namespace App\Admin\Controllers;
 
 use App\Helper\tool;
-use App\Model\AccountModel;
 use App\Model\TaskModel;
-use DenDroGram\Controller\AdjacencyList;
-use DenDroGram\Controller\DenDroGram;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
@@ -30,24 +27,26 @@ class TaskController extends AdminController
     protected function grid()
     {
         $grid = new Grid(new TaskModel);
-        $grid->model()->orderBy('created_at','desc');
+        $grid->model()->orderBy('created_at', 'desc');
         $grid->column('id', __('ID'))->sortable();
         $grid->column('task_type', '任务类型')->display(function ($type) {
-            if($type==0){
+            if ($type == 0) {
                 return '单任务';
             }
             return '批量任务';
         });
         $grid->column('status', '任务状态')->using([
-            0=> '待处理',
+            0 => '待处理',
             1 => '采集中',
-            2 => '采集失败',
-            3 => '采集完成'
+            2 => '采集完成',
+            3 => '采集等待中',
+            4 => '采集失败'
         ])->dot([
-            0=> 'default',
+            0 => 'default',
             1 => 'danger',
-            2 => 'warning',
-            3 => 'success',
+            2 => 'success',
+            3 => 'primary',
+            4 => 'warning',
         ]);
         $grid->column('url', '采集地址')->link()->style('width:200px');
         $grid->column('time', '采集间隔时间');
@@ -104,22 +103,30 @@ class TaskController extends AdminController
         $form->ignore('category');
         $form->saved(function (Form $form) {
             $id = $form->model()->id;
-            $result = tool::curlRequest(config('app.url').":8002/api/video/download/",json_encode([
-                'task_id'=>$id,
-            ]),["Content-type: application/json;charset='utf-8'"]);
-            $result = (array)json_decode($result,true);
-            if(!isset($result['status']) || $result['status'] != 0){
+            $result = tool::curlRequest(config('app.url') . ":8002/api/video/download/", json_encode([
+                'task_id' => $id,
+            ]), ["Content-type: application/json;charset='utf-8'"]);
+            $result = (array)json_decode($result, true);
+            if (!isset($result['status']) || $result['status'] != 0) {
                 Log::channel('createTask')->info('任务失败', $result);
-                TaskModel::where('id',$id)->update(['status'=>4]);
+                TaskModel::where('id', $id)->update(['status' => 4]);
             }
         });
 
         $form->display('id', __('ID'));
-        $form->select('task_type','任务类型')->options([0 => '单个视频', 1 => '定时任务']);
-        $form->text('account','yutuber账户');
-        $form->url('url','目标地址');
-        $form->number('time','间隔时间(小时)')->min(1)->default(1);
-        $form->number('cut_time','切割时间(分钟)')->min(1)->default(3);
+        $form->select('task_type', '任务类型')->options([0 => '单个视频', 1 => '定时任务']);
+        $form->text('account', 'yutuber账户');
+        $form->url('url', '目标地址');
+        $form->number('time', '任务间隔时间(小时)')->min(1)->default(1);
+        $form->number('cut_time', '切割时间(分钟)')->min(1)->default(3);
+
+        $form->file('audio','音频文件')->move('public/resource/audio')->uniqueName();
+        $form->number('audio_time', '插入音频时间(秒)')->min(0)->default(0);
+        $form->image('cover','全屏图片')->move('public/resource/image')->uniqueName();
+        $form->number('cover_time', '插入图片时间(秒)')->min(0)->default(0);
+        $form->image('mark','水印图片')->move('public/resource/image')->uniqueName();
+        $form->number('mark_position_x', '水印横坐标X')->min(0)->default(0);
+        $form->number('mark_position_y', '水印纵坐标Y')->min(0)->default(0);
 
         $form->display('created_at', __('Created At'));
         $form->display('updated_at', __('Updated At'));
