@@ -4,10 +4,12 @@ namespace App\Admin\Controllers;
 
 use App\Helper\tool;
 use App\Model\TaskModel;
+use App\Model\VideoModel;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Layout\Content;
+use Encore\Admin\Widgets\Table;
 use Illuminate\Support\Facades\Log;
 
 class TaskController extends AdminController
@@ -47,7 +49,15 @@ class TaskController extends AdminController
             2 => 'success',
             3 => 'primary',
             4 => 'warning',
-        ]);
+        ])->expand(function ($model) {
+            $id = $model->id;
+            $videos = VideoModel::where('task_id',$id)->get(['title', 'author','avatar','created_at']);
+            $videos = $videos->toArray();
+            foreach ($videos as &$video){
+                $video['avatar'] = "<img width='150px' src='{$video['avatar']}' />";
+            }
+            return new Table(['标题', '作者','封面', '发布时间'], $videos);
+        });
         $grid->column('url', '采集地址')->link()->style('width:200px');
         $grid->column('time', '采集间隔时间');
         $grid->column('account', 'yutuber账号')->style('width:200px');
