@@ -127,14 +127,23 @@ class TaskController extends AdminController
         $form->select('task_type', '任务类型')->options([0 => '单个视频', 1 => '定时任务']);
         $form->text('account', 'yutuber账户');
         $form->url('url', '目标地址');
-        $form->number('time', '任务间隔时间(小时)')->min(1)->default(1);
+        $form->number('time', '采集任务间隔时间(小时)')->min(1)->default(1);
+        $form->divider('视频切割');
         $form->number('cut_time', '切割时间(分钟)')->min(1)->default(3);
 
+        $form->divider('视频添加音乐');
         $form->file('audio','音频文件')->move('public/resource/audio')->uniqueName();
         $form->number('audio_time', '插入音频时间(秒)')->min(0)->default(0);
+
+        $form->divider('视频插入全屏图片');
         $form->image('cover','全屏图片')->move('public/resource/image')->uniqueName();
+        $form->file('cover_audio','背景音乐')->move('public/resource/audio')->uniqueName();
         $form->number('cover_time', '插入图片时间(秒)')->min(0)->default(0);
+
+        $form->divider('视频加入水印');
         $form->image('mark','水印图片')->move('public/resource/image')->uniqueName();
+        $form->number('mark_width', '水印宽')->min(0)->default(0);
+        $form->number('mark_height', '水印高')->min(0)->default(0);
         $form->number('mark_position_x', '水印横坐标X')->min(0)->default(0);
         $form->number('mark_position_y', '水印纵坐标Y')->min(0)->default(0);
 
