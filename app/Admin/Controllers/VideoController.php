@@ -131,6 +131,7 @@ EOF;
             return "<img width='300px' src='{$avatar}' />";
         });
         $show->author('作者');
+        $show->tags('标签');
         $show->resource('原视频')->unescape()->as(function ($resource) {
             $source = config('app.url') . '/' . $resource;
             return <<<EOF
@@ -179,15 +180,36 @@ EOF;
         $show->avatar()->unescape()->as(function ($avatar) {
             return "<img width='300px' src='{$avatar}' />";
         });
+        $show->tags('标签');
+        $show->resource('原视频')->unescape()->as(function ($resource){
+            return <<<EOF
+<video width="350" height="240" controls>
+    <source src="{$resource}" type="video/mp4">
+    <source src="movie.ogg" type="video/ogg">
+</video>
+EOF;
+        });
+        $show->resource2('已编辑视频')->unescape()->as(function ($resource){
+            return <<<EOF
+<video width="350" height="240" controls>
+    <source src="{$resource}" type="video/mp4">
+    <source src="movie.ogg" type="video/ogg">
+</video>
+EOF;
+        });
 
-        $publishUrl = config('app.url').'/admin/publishToBj';
-        $publishReturn = config('app.url').'/admin/video';
-        $show->html('发布')->unescape()->as(function ()use($publishUrl,$publishReturn,$id) {
+        $publishUrl = config('app.url') . '/admin/publishToBj';
+        $publishReturn = config('app.url') . '/admin/video';
+        $show->html('发布')->unescape()->as(function () use ($show, $publishUrl, $publishReturn, $id) {
+            $disable = "";
+            if (!$show->getModel()->resource2) {
+                $disable = "disabled";
+            }
             return <<<EOF
 <div class="col-sm-8">
     <select name="toAccountType" id="toAccountType" class="form-control">
         <option value="0">养号</option>
-        <option value="1">推广号</option>
+        <option value="1" {$disable}>推广号</option>
     </select>
     <button type="submit" id="publish" class="btn btn-primary" style="margin-top: 20px">确认发布</button>
 </div>
@@ -253,10 +275,11 @@ EOF;
                         "video_url" => $resource,
                         "cover_images" => $video->avatar,
                         "is_original" => 0,
+                        "tag" => $video->tags
                     ]
                 );
                 $result = (array)json_decode($result, true);
-                if($result !== 0){
+                if ($result !== 0) {
                     Log::channel('publish')->info('推送失败', $result);
                     continue;
                 }
@@ -264,10 +287,10 @@ EOF;
                     'video_id' => $videoId,
                     'account_id' => $account->id,
                 ]);
-                if($toAccountType == 0){
-                    VideoModel::where('id',$videoId)->update(['publish_status1'=>1]);
-                }else{
-                    VideoModel::where('id',$videoId)->update(['publish_status2'=>1]);
+                if ($toAccountType == 0) {
+                    VideoModel::where('id', $videoId)->update(['publish_status1' => 1]);
+                } else {
+                    VideoModel::where('id', $videoId)->update(['publish_status2' => 1]);
                 }
                 return response()->json(['status' => 1, 'message' => '发布成功']);
             }
@@ -289,35 +312,14 @@ EOF;
         });
         $form->display('id', __('ID'));
         $form->text('title', '标题');
-        $form->display('author', __('作者'));
         $form->image('avatar', '封面')->uniqueName();
-        $form->display('resource', __('资源路径'));
-        $form->hidden('type1', '');
-        $form->hidden('type2', '');
         $form->hidden('tags', '');
-
-        if ($id) {
-            $data = VideoModel::where('id', $id)->first();
-            $source = config('app.url') . '/' . $data->resource;
-            $source2 = config('app.url') . '/' . $data->resource2;
-            $video = <<<EOF
-<video width="350" height="240" controls>
-    <source src="{$source}" type="video/mp4">
-    <source src="movie.ogg" type="video/ogg">
-</video>
-<video width="350" height="240" controls>
-    <source src="{$source2}" type="video/mp4">
-    <source src="movie.ogg" type="video/ogg">
-</video>
-EOF;
-            $form->html($video, '视频展示');
-        }
 
         $tags = TagModel::get();
         $tagButton = "<div class='btn btn-primary v-tag' style='margin-right: 8px;margin-bottom: 8px'>%s</div>";
         $tagHtml = '';
-        foreach ($tags as $tag){
-            $tagHtml.=sprintf($tagButton,$tag->name);
+        foreach ($tags as $tag) {
+            $tagHtml .= sprintf($tagButton, $tag->name);
         }
         $html = <<<EOF
     <div style="width: 100%;display: grid; grid-template-rows: 45px 140px;border: 1px solid #ccc;border-radius: 10px">
@@ -389,16 +391,16 @@ EOF;
 
     public function destroy($id)
     {
-        $video = VideoModel::where('id',$id)->first();
-        if(file_exists(BASE_PATH.$video->resource)) {
+        $video = VideoModel::where('id', $id)->first();
+        if (file_exists(BASE_PATH . $video->resource)) {
             @unlink(BASE_PATH . $video->resource);
         }
-        if(file_exists(BASE_PATH . $video->resource2)) {
+        if (file_exists(BASE_PATH . $video->resource2)) {
             @unlink(BASE_PATH . $video->resource2);
         }
-        if($this->form()->destroy($id)){
+        if ($this->form()->destroy($id)) {
             return response()->json([
-                'status'  => true,
+                'status' => true,
                 'message' => '成功',
             ]);
         };
