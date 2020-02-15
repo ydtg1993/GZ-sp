@@ -294,6 +294,7 @@ EOF;
         $form->display('resource', __('资源路径'));
         $form->hidden('type1', '');
         $form->hidden('type2', '');
+        $form->hidden('tags', '');
 
         if ($id) {
             $data = VideoModel::where('id', $id)->first();
@@ -313,11 +314,53 @@ EOF;
         }
 
         $tags = TagModel::get();
-        $tagButton = "<a class='btn btn-primary' style='margin-right: 8px'>%s</a>";
-        $html = '';
+        $tagButton = "<div class='btn btn-primary v-tag' style='margin-right: 8px;margin-bottom: 8px'>%s</div>";
+        $tagHtml = '';
         foreach ($tags as $tag){
-            $html.=sprintf($tagButton,$tag->name);
+            $tagHtml.=sprintf($tagButton,$tag->name);
         }
+        $html = <<<EOF
+    <div style="width: 100%;display: grid; grid-template-rows: 45px 140px;border: 1px solid #ccc;border-radius: 10px">
+        <div id="tags-select" style="overflow-y: auto;border-bottom: 1px solid #ccc;padding: 5px"></div>
+        <div id="tags-content" style="overflow-y: auto;padding: 5px">
+            {$tagHtml}
+        </div>
+    </div>
+    <script>
+        var tags_select_dom = $('#tags-select');
+        var tags_content_dom = $('#tags-content');
+        var tags_input = $(".tags");
+        $('#tags-content .v-tag').click(tagSelect)
+
+        function tagSelect() {
+            var cdom = this.cloneNode(true);
+            cdom.addEventListener('click',tagCancel)
+            tags_select_dom.append(cdom);
+            this.remove();
+            addVal();
+        }
+
+        function tagCancel() {
+             var cdom = this.cloneNode(true);
+             cdom.addEventListener('click',tagSelect)
+             tags_content_dom.append(cdom)
+             this.remove();
+             addVal();
+        }
+
+        function addVal() {
+            var val = '';
+            tags_select_dom.children().each(function(i,n){
+                if(val){
+                    val+= ","+n.textContent;
+                }else {
+                    val = n.textContent;
+                }
+            });
+            tags_input.val(val);
+        }
+    </script>
+EOF;
         $form->html($html, '标签选择');
         $form->display('created_at', __('Created At'));
         $form->display('updated_at', __('Updated At'));
