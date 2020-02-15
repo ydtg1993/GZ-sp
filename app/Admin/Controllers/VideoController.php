@@ -6,6 +6,7 @@ use App\Helper\tool;
 use App\Model\AccountModel;
 use App\Model\CategoryModel;
 use App\Model\PublishModel;
+use App\Model\TagModel;
 use App\Model\TaskModel;
 use App\Model\VideoModel;
 use Carbon\Carbon;
@@ -311,6 +312,13 @@ EOF;
             $form->html($video, '视频展示');
         }
 
+        $tags = TagModel::get();
+        $tagButton = "<a class='btn btn-primary' style='margin-right: 8px'>%s</a>";
+        $html = '';
+        foreach ($tags as $tag){
+            $html.=sprintf($tagButton,$tag->name);
+        }
+        $form->html($html, '标签选择');
         $form->display('created_at', __('Created At'));
         $form->display('updated_at', __('Updated At'));
 

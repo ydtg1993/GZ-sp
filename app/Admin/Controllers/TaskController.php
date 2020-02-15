@@ -144,8 +144,8 @@ class TaskController extends AdminController
         $form->image('mark','水印图片')->move('public/resource/image')->uniqueName();
         $form->number('mark_width', '水印宽')->min(0)->default(0);
         $form->number('mark_height', '水印高')->min(0)->default(0);
-        $form->number('mark_position_x', '水印横坐标X')->min(0)->default(0);
-        $form->number('mark_position_y', '水印纵坐标Y')->min(0)->default(0);
+        $form->number('mark_x', '水印横坐标X')->min(0)->default(0);
+        $form->number('mark_y', '水印纵坐标Y')->min(0)->default(0);
 
         $form->display('created_at', __('Created At'));
         $form->display('updated_at', __('Updated At'));
