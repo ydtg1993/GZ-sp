@@ -110,17 +110,19 @@ class VideoController extends AdminController
         });
         $show->tags('标签');
         $show->resource('原视频')->unescape()->as(function ($resource){
+            $source = config('app.url') . '/' .$resource;
             return <<<EOF
 <video width="350" height="240" controls>
-    <source src="{$resource}" type="video/mp4">
+    <source src="{$source}" type="video/mp4">
     <source src="movie.ogg" type="video/ogg">
 </video>
 EOF;
         });
         $show->resource2('已编辑视频')->unescape()->as(function ($resource){
+            $source = config('app.url') . '/' .$resource;
             return <<<EOF
 <video width="350" height="240" controls>
-    <source src="{$resource}" type="video/mp4">
+    <source src="{$source}" type="video/mp4">
     <source src="movie.ogg" type="video/ogg">
 </video>
 EOF;
