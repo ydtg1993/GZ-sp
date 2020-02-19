@@ -235,8 +235,7 @@ EOF;
     {
         $form = new Form(new VideoModel());
         $form->saving(function (Form $form){
-            $title = $form->model()->title;
-            $len = mb_strlen($title);
+            $len = mb_strlen($form->title);
             if($len < 8 || $len > 40){
                 throw new \Exception('视频标题，限定 8-40 个中英文字符以内');
                 return;
