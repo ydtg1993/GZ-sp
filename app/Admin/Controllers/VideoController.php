@@ -63,6 +63,9 @@ class VideoController extends AdminController
             $filter->disableIdFilter();
             $filter->between('created_at', '创建时间')->datetime();
         });
+        $grid->actions(function ($actions) {
+            $actions->disableView();
+        });
         return $grid;
     }
 
@@ -79,81 +82,6 @@ class VideoController extends AdminController
             ->header('视频')
             ->description('视频详情')
             ->body($this->detail($id));
-    }
-
-    /**
-     * Make a show builder.
-     *
-     * @param mixed $id
-     * @return Show
-     */
-    protected function detail($id)
-    {
-        $show = new Show(VideoModel::findOrFail($id));
-
-        $show->id('ID');
-        $show->title('标题');
-        $show->task_id('任务')->unescape()->as(function ($task_id) {
-            $task = TaskModel::where('id', $task_id)->first();
-            $task_type = $task->task_type == 0 ? '单任务' : '定时任务';
-            $task_status = '';
-            switch ($task->status) {
-                case 0:
-                    $task_status = '待处理';
-                    break;
-                case 1:
-                    $task_status = '采集中';
-                    break;
-                case 2:
-                    $task_status = '采集完成';
-                    break;
-            }
-            return <<<EOF
-<table class="table table-hover">
-    <tr>
-        <th>任务类型</th>
-        <th>状态</th>
-        <th>yutube账户</th>
-        <th>目标地址</th>
-        <th>任务详情</th>
-    </tr>
-    <tr>
-        <td>{$task_type}</td>
-        <td>{$task_status}</td>
-        <td>$task->account</td>
-        <td><a href="{$task->url}" target="_BLANK">地址</a></td>
-        <td></td>
-    </tr>
-</table>
-EOF;
-        });
-        $show->avatar()->unescape()->as(function ($avatar) {
-            return "<img width='300px' src='{$avatar}' />";
-        });
-        $show->author('作者');
-        $show->tags('标签');
-        $show->resource('原视频')->unescape()->as(function ($resource) {
-            $source = config('app.url') . '/' . $resource;
-            return <<<EOF
-<video width="350" height="240" controls>
-    <source src="{$source}" type="video/mp4">
-    <source src="movie.ogg" type="video/ogg">
-</video>
-EOF;
-        });
-        $show->resource2('已编辑视频')->unescape()->as(function ($resource) {
-            $source = config('app.url') . '/' . $resource;
-            return <<<EOF
-<video width="350" height="240" controls>
-    <source src="{$source}" type="video/mp4">
-    <source src="movie.ogg" type="video/ogg">
-</video>
-EOF;
-        });
-        $show->created_at('Created at');
-        $show->updated_at('Updated at');
-
-        return $show;
     }
 
     /**
@@ -306,14 +234,28 @@ EOF;
     protected function form($id = '')
     {
         $form = new Form(new VideoModel());
+        $form->saving(function (Form $form){
+            $title = $form->model()->title;
+            $len = mb_strlen($title);
+            if($len < 8 || $len > 40){
+                throw new \Exception('视频标题，限定 8-40 个中英文字符以内');
+                return;
+            }
+        });
         $form->saved(function (Form $form) {
             $id = $form->model()->id;
             return redirect('/admin/publish/' . $id);
         });
         $form->display('id', __('ID'));
-        $form->text('title', '标题');
-        $form->image('avatar', '封面')->uniqueName();
-        $form->hidden('tags', '');
+        $help = "视频标题，限定 8-40 个中英文字符以内";
+        if($id){
+            $video = VideoModel::where('id',$id)->first();
+            $len = mb_strlen($video->title);
+            $help = "视频标题，限定 8-40 个中英文字符以内 当前长度({$len})";
+        }
+        $form->text('title', '标题')->help($help);
+        $form->image('avatar', '封面')->help('封面图尺寸不小于660*370')->uniqueName();
+        $form->hidden('tags');
 
         $tags = TagModel::get();
         $tagButton = "<div class='btn btn-primary v-tag' style='margin-right: 8px;margin-bottom: 8px'>%s</div>";
