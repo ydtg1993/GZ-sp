@@ -216,9 +216,9 @@ EOF;
                     'account_id' => $account->id,
                 ]);
                 if ($toAccountType == 0) {
-                    VideoModel::where('id', $videoId)->update(['publish_status1' => 1]);
+                    VideoModel::where('id', $videoId)->update(['publish_status1' => 1,'article_id1'=>$result['data']['article_id']]);
                 } else {
-                    VideoModel::where('id', $videoId)->update(['publish_status2' => 1]);
+                    VideoModel::where('id', $videoId)->update(['publish_status2' => 1,'article_id2'=>$result['data']['article_id']]);
                 }
                 return response()->json(['status' => 1, 'message' => '发布成功']);
             }
