@@ -210,6 +210,15 @@ EOF;
                     ]
                 );
                 $result = (array)json_decode($result, true);
+                Log::channel('publish')->info('推送失败', [
+                    "app_id" => $account->app_id,
+                    "app_token" => $account->app_token,
+                    "title" => $video->title,
+                    "video_url" => $resource,
+                    "cover_images" => $video->avatar,
+                    "is_original" => 0,
+                    "tag" => $video->tags
+                ]);
                 if ($result['errno'] !== 0) {
                     Log::channel('publish')->info('推送失败', $result);
                     continue;
