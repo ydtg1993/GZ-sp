@@ -157,7 +157,7 @@ $('#publish').click(function() {
         },
         success:function(d) {
             console.log(d);
-            if(d.status == 0){
+            if(d.status == 1){
                 window.location.href = '{$publishReturn}';
             }else {
                 alert(d.message);
