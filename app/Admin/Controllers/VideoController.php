@@ -156,10 +156,11 @@ $('#publish').click(function() {
           toAccountType:$('#toAccountType').val(),
         },
         success:function(d) {
+            console.log(d);
             if(d.status == 0){
                 window.location.href = '{$publishReturn}';
             }else {
-                admin_toastr(d.message, 'error');
+                alert(d.message);
             }
         }
     })
