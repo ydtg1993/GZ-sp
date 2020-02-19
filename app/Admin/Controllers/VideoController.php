@@ -210,7 +210,7 @@ EOF;
                     ]
                 );
                 $result = (array)json_decode($result, true);
-                if ($result !== 0) {
+                if ($result['errno'] !== 0) {
                     Log::channel('publish')->info('推送失败', $result);
                     continue;
                 }
