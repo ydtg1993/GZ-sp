@@ -184,6 +184,10 @@ EOF;
     {
         $videoId = (int)$request->input('id');
         $toAccountType = (int)$request->input('toAccountType');
+        $flag = PublishModel::where(['video_id'=>$videoId,'type'=>$toAccountType])->exists();
+        if($flag){
+            return response()->json(['status' => 2, 'message' => '该视频已经发布过']);
+        }
         $accounts = AccountModel::where('type', $toAccountType)->inRandomOrder()->get();
 
         foreach ($accounts as $account) {
