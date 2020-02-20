@@ -55,7 +55,7 @@ class TaskController extends AdminController
             $videos = $videos->toArray();
             $url = config('app.url');
             foreach ($videos as &$video){
-                $video['id'] = "<a href='{$url}/admin/video/{$video['id']}/edit' target='_blank'></a>";
+                $video['id'] = "<a href='{$url}/admin/video/{$video['id']}/edit' target='_blank'>详情</a>";
             }
             return new Table(['标题', '作者','详情', '发布时间'], $videos);
         });
