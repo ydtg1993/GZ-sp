@@ -59,19 +59,19 @@ class VideoController extends AdminController
             0 => 'default',
             1 => 'success',
         ]);
-        $grid->column('resource1')->display(function($resource){
+        $grid->column('resource','原视频')->display(function($resource){
             $source = config('app.url') . '/' .$resource;
             return <<<EOF
-<video width="250" height="140" controls>
+<video width="220" height="120" controls>
     <source src="{$source}" type="video/mp4">
     <source src="movie.ogg" type="video/ogg">
 </video>
 EOF;
         });
-        $grid->column('resource2')->display(function($resource){
+        $grid->column('resource2','编辑视频')->display(function($resource){
             $source = config('app.url') . '/' .$resource;
             return <<<EOF
-<video width="250" height="140" controls>
+<video width="230" height="120" controls>
     <source src="{$source}" type="video/mp4">
     <source src="movie.ogg" type="video/ogg">
 </video>
