@@ -38,8 +38,12 @@ class VideoController extends AdminController
     {
         $grid = new Grid(new VideoModel);
         $grid->column('id', __('ID'))->sortable();
-        $grid->column('title', '标题')->style('width:150px');
-        $grid->column('author', '作者');
+        $grid->column('title', '标题')->display(function ($title) {
+            return "<div title='{$title}' style='width:150px;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;'>$title</div>";
+        });
+        $grid->column('author', '作者')->display(function ($title) {
+            return "<div title='{$title}' style='width:150px;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;'>$title</div>";
+        });
         $grid->column('avatar')->image();
         $grid->column('publish_status1', '养号发布')->using([
             0 => '待发布',
@@ -55,6 +59,24 @@ class VideoController extends AdminController
             0 => 'default',
             1 => 'success',
         ]);
+        $grid->column('resource1')->display(function($resource){
+            $source = config('app.url') . '/' .$resource;
+            return <<<EOF
+<video width="250" height="140" controls>
+    <source src="{$source}" type="video/mp4">
+    <source src="movie.ogg" type="video/ogg">
+</video>
+EOF;
+        });
+        $grid->column('resource2')->display(function($resource){
+            $source = config('app.url') . '/' .$resource;
+            return <<<EOF
+<video width="250" height="140" controls>
+    <source src="{$source}" type="video/mp4">
+    <source src="movie.ogg" type="video/ogg">
+</video>
+EOF;
+        });
         $grid->disableCreateButton();
         $grid->disableExport();
         $grid->disableRowSelector();
