@@ -51,7 +51,7 @@ class TaskController extends AdminController
             4 => 'warning',
         ])->expand(function ($model) {
             $id = $model->id;
-            $videos = VideoModel::where('task_id',$id)->get(['title', 'author','id','created_at']);
+            $videos = VideoModel::where('task_id',$id)->orderBy('created_at','DESC')->get(['title', 'author','id','created_at']);
             $videos = $videos->toArray();
             $url = config('app.url');
             foreach ($videos as &$video){
