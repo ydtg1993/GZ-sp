@@ -51,12 +51,13 @@ class TaskController extends AdminController
             4 => 'warning',
         ])->expand(function ($model) {
             $id = $model->id;
-            $videos = VideoModel::where('task_id',$id)->get(['title', 'author','avatar','created_at']);
+            $videos = VideoModel::where('task_id',$id)->get(['title', 'author','id','created_at']);
             $videos = $videos->toArray();
+            $url = config('app.url');
             foreach ($videos as &$video){
-                $video['avatar'] = "<img width='150px' src='{$video['avatar']}' />";
+                $video['id'] = "<a href='{$url}/admin/video/{$video['id']}/edit' target='_blank'></a>";
             }
-            return new Table(['标题', '作者','封面', '发布时间'], $videos);
+            return new Table(['标题', '作者','详情', '发布时间'], $videos);
         });
         $grid->column('url', '采集地址')->link()->style('width:200px');
         $grid->column('time', '采集间隔时间');
