@@ -133,10 +133,10 @@ class TaskController extends AdminController
         $form->number('cut_time', '切割时间(分钟)')->min(1)->default(3);
 
         $form->divider('插入开始短片');
-        $form->file('op_video','开始短片')->move('public/resource/video')->rules('mimes:video/mp4')->uniqueName();
+        $form->file('op_video','开始短片')->rules('mimes:video/mpeg,video/mp4')->move('public/resource/video')->uniqueName();
 
         $form->divider('视频添加音乐');
-        $form->file('audio','音频文件')->rules('mimes:audio/mpeg,audio/mp4')->move('public/resource/audio')->uniqueName();
+        $form->file('audio','音频文件')->rules('mimes:audio/midi,audio/mpeg,audio/webm,audio/ogg,audio/wav')->move('public/resource/audio')->uniqueName();
         $form->number('audio_time', '插入音频时间(秒)')->min(0)->default(0);
 
         $form->divider('视频插入全屏图片');
