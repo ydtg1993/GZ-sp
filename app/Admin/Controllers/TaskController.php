@@ -132,6 +132,9 @@ class TaskController extends AdminController
         $form->divider('视频切割');
         $form->number('cut_time', '切割时间(分钟)')->min(1)->default(3);
 
+        $form->divider('插入开始短片');
+        $form->file('op_video','开始短片')->move('public/resource/video')->uniqueName();
+
         $form->divider('视频添加音乐');
         $form->file('audio','音频文件')->move('public/resource/audio')->uniqueName();
         $form->number('audio_time', '插入音频时间(秒)')->min(0)->default(0);
