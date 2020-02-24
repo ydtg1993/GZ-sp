@@ -36,14 +36,18 @@ class VideoController extends AdminController
      */
     protected function grid()
     {
+        /*$title2 = preg_replace("/\"|\'|\:/","","Shaqtin' A Clip: Ankle Breaker_1");
+        dd($title2);*/
         $grid = new Grid(new VideoModel);
         $grid->column('id', __('ID'))->sortable();
         $grid->column('title', '标题')->display(function ($title) {
-            $title = stripslashes($title);
-            return "<div title='{$title}' style='width:150px;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;'>$title</div>";
+            $title2 = preg_replace("/\"|\'|\n/","",$title);
+            return <<<EOF
+<div title="$title2" style='width:150px;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;'>$title</div>
+EOF;
         });
         $grid->column('author', '作者')->display(function ($title) {
-            return "<div title='{$title}' style='width:150px;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;'>$title</div>";
+            return "<div title={$title} style='width:150px;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;'>$title</div>";
         });
         $grid->column('avatar')->image();
         $grid->column('publish_status1', '养号发布')->using([
