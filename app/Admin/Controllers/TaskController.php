@@ -146,19 +146,19 @@ class TaskController extends AdminController
         $form->number('cut_time', '切割时间(分钟)')->min(1)->default(3);
 
         $form->divider('插入开始短片');
-        $form->file('op_video', '开始短片')->rules('mimes:video/mpeg,video/mp4')->move('public/resource/video')->uniqueName();
+        $form->file('op_video', '开始短片')->rules('mimes:video/mpeg,video/mp4')->move('video')->uniqueName();
 
         $form->divider('视频添加音乐');
-        $form->file('audio', '音频文件')->rules('mimes:audio/midi,audio/mpeg,audio/webm,audio/ogg,audio/wav')->move('public/resource/audio')->uniqueName();
+        $form->file('audio', '音频文件')->rules('mimes:audio/midi,audio/mpeg,audio/webm,audio/ogg,audio/wav')->move('audio')->uniqueName();
         $form->number('audio_time', '插入音频时间(秒)')->min(0)->default(0);
 
         $form->divider('视频插入全屏图片');
-        $form->image('cover', '全屏图片')->move('public/resource/image')->uniqueName();
-        $form->file('cover_audio', '背景音乐')->move('public/resource/audio')->uniqueName();
+        $form->image('cover', '全屏图片')->move('image')->uniqueName();
+        $form->file('cover_audio', '背景音乐')->move('audio')->uniqueName();
         $form->number('cover_time', '插入图片时间(秒)')->min(0)->default(0);
 
         $form->divider('视频加入水印');
-        $form->image('mark', '水印图片')->move('public/resource/image')->uniqueName();
+        $form->image('mark', '水印图片')->move('image')->uniqueName();
         $form->number('mark_width', '水印宽')->min(0)->default(0);
         $form->number('mark_height', '水印高')->min(0)->default(0);
         $form->number('mark_x', '水印横坐标X')->min(0)->default(0);
