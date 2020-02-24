@@ -114,7 +114,7 @@ class TaskController extends AdminController
         $form->ignore('category');
         $form->saved(function (Form $form) {
             $id = $form->model()->id;
-            $result = tool::curlRequest(config('app.url') . ":8002/api/video/download/", json_encode([
+            $result = tool::curlRequest(config('app.url') . ":8002/api/video/task/", json_encode([
                 'task_id' => $id,
             ]), ["Content-type: application/json;charset='utf-8'"]);
             $result = (array)json_decode($result, true);

@@ -36,8 +36,6 @@ class VideoController extends AdminController
      */
     protected function grid()
     {
-        /*$title2 = preg_replace("/\"|\'|\:/","","Shaqtin' A Clip: Ankle Breaker_1");
-        dd($title2);*/
         $grid = new Grid(new VideoModel);
         $grid->column('id', __('ID'))->sortable();
         $grid->column('title', '标题')->display(function ($title) {
