@@ -37,6 +37,7 @@ class VideoController extends AdminController
     protected function grid()
     {
         $grid = new Grid(new VideoModel);
+        $grid->model()->orderBy('created_at', 'desc');
         $grid->column('id', __('ID'))->sortable();
         $grid->column('title', '标题')->display(function ($title) {
             $title2 = preg_replace("/\"|\'|\n/","",$title);
