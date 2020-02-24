@@ -2,6 +2,7 @@
 
 namespace App\Admin\Controllers;
 
+use App\Admin\Extensions\StopTask;
 use App\Helper\tool;
 use App\Model\TaskModel;
 use App\Model\VideoModel;
@@ -85,6 +86,12 @@ class TaskController extends AdminController
             $filter->between('created_at', '创建时间')->datetime();
         });
         $grid->disableActions();
+        /*$grid->actions(function ($actions) {
+            $actions->disableView();
+            $actions->disableEdit();
+            $actions->disableDelete();
+            $actions->append(new StopTask($actions->getKey()));
+        });*/
         return $grid;
     }
 
