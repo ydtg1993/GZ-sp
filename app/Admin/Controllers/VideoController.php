@@ -39,7 +39,7 @@ class VideoController extends AdminController
         $grid = new Grid(new VideoModel);
         $grid->column('id', __('ID'))->sortable();
         $grid->column('title', '标题')->display(function ($title) {
-            $title = addcslashes($title);
+            $title = stripslashes($title);
             return "<div title='{$title}' style='width:150px;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;'>$title</div>";
         });
         $grid->column('author', '作者')->display(function ($title) {
