@@ -5,6 +5,7 @@ namespace App\Admin\Controllers;
 use App\Helper\tool;
 use App\Model\AccountModel;
 use App\Model\CategoryModel;
+use App\Model\DownloadModel;
 use App\Model\PublishModel;
 use App\Model\TagModel;
 use App\Model\TaskModel;
@@ -381,6 +382,7 @@ EOF;
         if (file_exists(BASE_PATH . $video->resource2)) {
             @unlink(BASE_PATH . $video->resource2);
         }
+        DownloadModel::where('origin_id',$video->origin_id)->delete();
         if ($this->form()->destroy($id)) {
             return response()->json([
                 'status' => true,
