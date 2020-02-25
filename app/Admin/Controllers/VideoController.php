@@ -172,6 +172,7 @@ EOF;
 </div>
 <script>
 $('#publish').click(function() {
+    alert($('#toAccountType').val())
     $.ajax({
         headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -257,6 +258,7 @@ EOF;
                 PublishModel::insert([
                     'video_id' => $videoId,
                     'account_id' => $account->id,
+                    'type'=>$toAccountType
                 ]);
                 if ($toAccountType == 0) {
                     VideoModel::where('id', $videoId)->update(['publish_status1' => 1,'article_id1'=>$result['data']['article_id']]);
