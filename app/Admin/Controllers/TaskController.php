@@ -44,13 +44,15 @@ class TaskController extends AdminController
             1 => '采集中',
             2 => '采集完成',
             3 => '采集等待中',
-            4 => '采集失败'
+            4 => '采集失败',
+            5 => '采集暂停'
         ])->dot([
             0 => 'default',
             1 => 'danger',
             2 => 'success',
             3 => 'primary',
             4 => 'warning',
+            5 => 'danger'
         ])->expand(function ($model) {
             $id = $model->id;
             $videos = VideoModel::where('task_id', $id)
@@ -81,7 +83,10 @@ class TaskController extends AdminController
             $filter->equal('status', '任务状态')->select([
                 0 => '待处理',
                 1 => '采集中',
-                2 => '已完成'
+                2 => '采集完成',
+                3 => '采集等待中',
+                4 => '采集失败',
+                5 => '采集暂停'
             ]);
             $filter->between('created_at', '创建时间')->datetime();
         });
