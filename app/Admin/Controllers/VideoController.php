@@ -172,7 +172,6 @@ EOF;
 </div>
 <script>
 $('#publish').click(function() {
-    alert($('#toAccountType').val())
     $.ajax({
         headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
