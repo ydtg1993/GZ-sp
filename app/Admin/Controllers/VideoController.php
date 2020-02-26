@@ -125,12 +125,12 @@ EOF;
                 continue;
             }
             $title = $type == 0 ? '养号视频实时数据' : '推广视频实时数据';
-            $recommend_count = $data['recommend_count'];
-            $comment_count = $data['comment_count'];
-            $view_count = $data['view_count'];
-            $share_count = $data['share_count'];
-            $collect_count = $data['collect_count'];
-            $likes_count = $data['likes_count'];
+            $recommend_count = $data['data']['recommend_count'] > 0 ? $data['data']['recommend_count'] : 0;
+            $comment_count = $data['data']['comment_count'] > 0 ? $data['data']['comment_count'] : 0;
+            $view_count = $data['data']['view_count'] > 0 ? $data['data']['view_count'] : 0;
+            $share_count = $data['data']['share_count'] > 0 ? $data['data']['share_count'] : 0;
+            $collect_count = $data['data']['collect_count'] > 0 ? $data['data']['collect_count'] : 0;
+            $likes_count = $data['data']['likes_count'] > 0 ? $data['data']['likes_count'] : 0;
                 $panel = <<<EOF
 <div id="chart{$type}" style="width: 600px;height:400px;"></div>
 <script type="text/javascript">
