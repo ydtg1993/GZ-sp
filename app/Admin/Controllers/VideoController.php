@@ -132,7 +132,7 @@ EOF;
             $collect_count = $data['data']['collect_count'] > 0 ? $data['data']['collect_count'] : 1;
             $likes_count = $data['data']['likes_count'] > 0 ? $data['data']['likes_count'] : 1;
                 $panel = <<<EOF
-<div id="chart{$type}" style="width: 600px;height:400px;"></div>
+<div id="chart{$type}" style="height:400px;"></div>
 <script type="text/javascript">
         var myChart = echarts.init(document.getElementById('chart{$type}'));
         var option = {
