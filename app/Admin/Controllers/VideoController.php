@@ -39,6 +39,19 @@ class VideoController extends AdminController
     {
         $grid = new Grid(new VideoModel);
         $grid->model()->orderBy('created_at', 'desc');
+        $grid->header(function ($query) {
+            return <<<EOF
+<script>function openVideo(source) {
+  var dom = document.getElementById(source);
+  var div = document.createElement("div");
+  div.innerHTML = "<video width=230 height=120 controls>" +
+   "<source src="+ source +" type=video/mp4>" +
+    "<source src=movie.ogg type=video/ogg>" +
+     "</video>";
+  dom.append(div)
+}</script>
+EOF;
+        });
         $grid->column('id', __('ID'))->sortable();
         $grid->column('title', '标题')->display(function ($title) {
             $title2 = preg_replace("/\"|\'|\n/","",$title);
@@ -67,19 +80,15 @@ EOF;
         $grid->column('resource','原视频')->display(function($resource){
             $source = config('app.url') . '/' .$resource;
             return <<<EOF
-<video width="220" height="120" controls>
-    <source src="{$source}" type="video/mp4">
-    <source src="movie.ogg" type="video/ogg">
-</video>
+<a href="javascript:void(0);" onclick=openVideo('{$source}')>查看</a>
+<div id="{$source}"></div>
 EOF;
         });
         $grid->column('resource2','编辑视频')->display(function($resource){
             $source = config('app.url') . '/' .$resource;
             return <<<EOF
-<video width="230" height="120" controls>
-    <source src="{$source}" type="video/mp4">
-    <source src="movie.ogg" type="video/ogg">
-</video>
+<a href="javascript:void(0);" onclick=openVideo('{$source}')>查看</a>
+<div id="{$source}"></div>
 EOF;
         });
         $grid->disableCreateButton();
