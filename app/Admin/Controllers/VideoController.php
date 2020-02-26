@@ -90,9 +90,6 @@ EOF;
             $filter->disableIdFilter();
             $filter->between('created_at', '创建时间')->datetime();
         });
-        $grid->actions(function ($actions) {
-            $actions->disableView();
-        });
         return $grid;
     }
 
@@ -105,10 +102,70 @@ EOF;
      */
     public function show($id, Content $content)
     {
+        $script = config('app.url').'/lib/echarts.min.js';
+        $html = <<<EOF
+<script src="{$script}"></script>%s
+EOF;
+
+        $video = VideoModel::where('id',$id)->first();
+        $publishes = PublishModel::where('video_id',$id)->orderBy('type')->get();
+        $publishes = $publishes->toArray();
+        $chartsPanel = '';
+        foreach ($publishes as $publish){
+            $account_id = $publish['account_id'];
+            $type = $publish['type'];
+            $account = AccountModel::where('id',$account_id)->first();
+            $result = tool::curlRequest("http://baijiahao.baidu.com/builderinner/open/resource/query/articleStatistics",[
+                "app_id"=>$account->app_id,
+                "app_token"=>$account->app_token,
+                "article_id"=>$type == 0 ? $video->article_id1 : $video->article_id2
+            ]);
+            $data = json_decode($result,true);
+            if(!isset($data['errno']) && $data['errno'] != 0){
+                continue;
+            }
+            $title = $type == 0 ? '养号视频实时数据' : '推广视频实时数据';
+            $recommend_count = $data['recommend_count'];
+            $comment_count = $data['comment_count'];
+            $view_count = $data['view_count'];
+            $share_count = $data['share_count'];
+            $collect_count = $data['collect_count'];
+            $likes_count = $data['likes_count'];
+                $panel = <<<EOF
+<div id="chart{$type}" style="width: 600px;height:400px;"></div>
+<script type="text/javascript">
+        var myChart = echarts.init(document.getElementById('chart{$type}'));
+        var option = {
+            title: {
+                text: '{$title}'
+            },
+            color: ['#3398DB'],
+            tooltip: {},
+            legend: {
+                data:['统计数']
+            },
+            xAxis: {
+                data: ["推荐量","评论量","阅读/播放量","分享量","收藏量","点赞量"]
+            },
+            yAxis: {},
+            series: [{
+                name: '销量',
+                type: 'bar',
+                data: [{$recommend_count}, {$comment_count},{$view_count},
+                {$share_count}, {$collect_count}, {$likes_count}]
+            }]
+        };
+        myChart.setOption(option);
+</script>
+EOF;
+            $chartsPanel.= $panel;
+        }
+
+        $html = sprintf($html,$chartsPanel);
         return $content
             ->header('视频')
             ->description('视频详情')
-            ->body($this->detail($id));
+            ->body($html);
     }
 
     /**
