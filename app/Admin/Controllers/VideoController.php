@@ -43,6 +43,11 @@ class VideoController extends AdminController
             return <<<EOF
 <script>function openVideo(source) {
   var dom = document.getElementById(source);
+  var childs = dom.childNodes;
+for(var i = 0; i < childs.length; i++) {
+    alert(childs[i].nodeName);
+    dom.removeChild(childs[i]);
+}
   var div = document.createElement("div");
   div.innerHTML = "<video width=230 height=120 controls>" +
    "<source src="+ source +" type=video/mp4>" +
