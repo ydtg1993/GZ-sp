@@ -45,7 +45,6 @@ class VideoController extends AdminController
   var dom = document.getElementById(source);
   var childs = dom.childNodes;
 for(var i = 0; i < childs.length; i++) {
-    alert(childs[i].nodeName);
     dom.removeChild(childs[i]);
 }
   var div = document.createElement("div");
