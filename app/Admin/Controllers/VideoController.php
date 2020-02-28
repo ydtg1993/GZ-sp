@@ -82,9 +82,6 @@ EOF;
             1 => 'success',
         ]);
         $grid->column('resource','原视频')->display(function($resource){
-            if(!$resource){
-                return "暂无视频";
-            }
             $source = config('app.url') . '/' .$resource;
             return <<<EOF
 <a href="javascript:void(0);" onclick=openVideo('{$source}')>查看</a>
@@ -92,6 +89,9 @@ EOF;
 EOF;
         });
         $grid->column('resource2','编辑视频')->display(function($resource){
+            if(!$resource){
+                return "暂无视频";
+            }
             $source = config('app.url') . '/' .$resource;
             return <<<EOF
 <a href="javascript:void(0);" onclick=openVideo('{$source}')>查看</a>
