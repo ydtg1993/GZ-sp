@@ -192,6 +192,13 @@ class TaskController extends AdminController
         $form = new Form(new TaskModel());
 
         $form->ignore('category');
+        $form->saving(function (Form $form){
+            $url = $form->model()->url;
+            $check = TaskModel::where('url', $url)->first;
+            if($check){
+                throw new \Exception('目标地址重复 已有相同任务在运行');
+            }
+        });
         $form->saved(function (Form $form) {
             $id = $form->model()->id;
             $result = tool::curlRequest(config('app.url') . ":8002/api/video/task/", json_encode([
