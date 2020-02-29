@@ -205,7 +205,12 @@ EOF;
         $show = new Show(VideoModel::findOrFail($id));
         $show->title('标题');
         $show->avatar()->unescape()->as(function ($avatar) {
-            return "<img width='300px' src='{$avatar}' />";
+            if(preg_match("/^http.*/",$avatar)){
+                $url = $avatar;
+            }else{
+                $url = config('app.url').'/upload/'.$avatar;
+            }
+            return "<img width='300px' src='{$url}' />";
         });
         $show->tags('标签');
         $show->resource('原视频')->unescape()->as(function ($resource){
@@ -300,6 +305,11 @@ EOF;
                 if ($toAccountType == 1) {
                     $resource = config('app.url') . '/' . $video->resource2;
                 }
+                if(preg_match("/^http.*/",$video->avatar)){
+                    $avatar = $video->avatar;
+                }else{
+                    $avatar = config('app.url').'/upload/'.$video->avatar;
+                }
                 $result = tool::curlRequest(
                     "http://baijiahao.baidu.com/builderinner/open/resource/video/publish",
                     [
@@ -307,7 +317,7 @@ EOF;
                         "app_token" => $account->app_token,
                         "title" => $video->title,
                         "video_url" => $resource,
-                        "cover_images" => $video->avatar,
+                        "cover_images" => $avatar,
                         "is_original" => 0,
                         "tag" => $video->tags
                     ]
