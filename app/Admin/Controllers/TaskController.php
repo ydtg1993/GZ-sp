@@ -129,10 +129,56 @@ class TaskController extends AdminController
      */
     public function edit($id, Content $content)
     {
+        set_time_limit(0);
+        $form = new Form(new TaskModel());
+
+        $form->ignore('category');
+        $form->saved(function (Form $form) {
+            $id = $form->model()->id;
+            $result = tool::curlRequest(config('app.url') . ":8002/api/video/task/", json_encode([
+                'task_id' => $id,
+            ]), ["Content-type: application/json;charset='utf-8'"]);
+            $result = (array)json_decode($result, true);
+            if (!isset($result['status']) || $result['status'] != 0) {
+                Log::channel('createTask')->info('任务失败', $result);
+                TaskModel::where('id', $id)->update(['status' => 4]);
+            }
+        });
+
+        $form->display('id', __('ID'));
+        $form->select('task_type', '任务类型')->options([0 => '单个视频', 1 => '定时任务'])->readonly();
+        $form->display('account', 'yutuber账户');
+        $form->display('url', '目标地址');
+        $form->number('time', '采集任务间隔时间(小时)')->min(1)->default(1);
+        $form->divider('视频切割');
+        $form->number('cut_time', '切割时间(分钟)')->min(1)->default(3);
+
+        $form->divider('插入开始短片');
+        $form->file('op_video', '开始短片')->uniqueName();
+
+        $form->divider('视频添加音乐');
+        $form->file('audio', '音频文件')->uniqueName();
+        $form->number('audio_time', '插入音频时间(秒)')->min(0)->default(0);
+
+        $form->divider('视频插入全屏图片');
+        $form->image('cover', '全屏图片')->uniqueName();
+        $form->file('cover_audio', '背景音乐')->uniqueName();
+        $form->number('cover_time', '插入图片时间(秒)')->min(0)->default(0);
+
+        $form->divider('视频加入水印');
+        $form->image('mark', '水印图片')->uniqueName();
+        $form->number('mark_width', '水印宽')->min(0)->default(0);
+        $form->number('mark_height', '水印高')->min(0)->default(0);
+        $form->number('mark_x', '水印横坐标X')->min(0)->default(0);
+        $form->number('mark_y', '水印纵坐标Y')->min(0)->default(0);
+
+        $form->display('created_at', __('Created At'));
+        $form->display('updated_at', __('Updated At'));
+
         return $content
             ->header('百家账户')
             ->description('修改修改接入商户')
-            ->body($this->form()->edit($id));
+            ->body($form);
     }
 
     /**
