@@ -90,13 +90,13 @@ class TaskController extends AdminController
             ]);
             $filter->between('created_at', '创建时间')->datetime();
         });
-        $grid->disableActions();
-        /*$grid->actions(function ($actions) {
+        //$grid->disableActions();
+        $grid->actions(function ($actions) {
             $actions->disableView();
-            $actions->disableEdit();
+            //$actions->disableEdit();
             $actions->disableDelete();
-            $actions->append(new StopTask($actions->getKey()));
-        });*/
+            //$actions->append(new StopTask($actions->getKey()));
+        });
         return $grid;
     }
 
@@ -118,6 +118,21 @@ class TaskController extends AdminController
             ->header('创建任务')
             ->description('创建任务')
             ->body($this->form());
+    }
+
+    /**
+     * Edit interface.
+     *
+     * @param mixed $id
+     * @param Content $content
+     * @return Content
+     */
+    public function edit($id, Content $content)
+    {
+        return $content
+            ->header('百家账户')
+            ->description('修改修改接入商户')
+            ->body($this->form()->edit($id));
     }
 
     /**
