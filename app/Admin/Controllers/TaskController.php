@@ -194,7 +194,7 @@ class TaskController extends AdminController
         $form->ignore('category');
         $form->saving(function (Form $form){
             $url = $form->model()->url;
-            $check = TaskModel::where('url', $url)->first;
+            $check = TaskModel::where('url', $url)->first();
             if($check){
                 throw new \Exception('目标地址重复 已有相同任务在运行');
             }
