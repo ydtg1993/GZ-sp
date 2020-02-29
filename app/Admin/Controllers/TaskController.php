@@ -178,7 +178,7 @@ class TaskController extends AdminController
         return $content
             ->header('百家账户')
             ->description('修改修改接入商户')
-            ->body($form);
+            ->body($form->edit($id));
     }
 
     /**
