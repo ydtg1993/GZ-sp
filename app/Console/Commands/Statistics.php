@@ -83,6 +83,14 @@ class Statistics extends Command
                 'likes_count' => self::checkNum($data['data']['likes_count']),
                 'created_at' => $today
             ];
+            if($data['recommend_count'] == 0 &&
+            $data['comment_count'] == 0 &&
+            $data['view_count'] == 0 &&
+            $data['share_count'] == 0 &&
+            $data['collect_count'] == 0 &&
+            $data['likes_count'] == 0){
+                continue;
+            }
             $statistic[] = $data;
         }
         VideoStatisticModel::insert($statistic);
