@@ -11,7 +11,7 @@ use App\Model\VideoStatisticModel;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 
-class Statistics
+class Statistics extends Command
 {
     /**
      * The name and signature of the console command.
@@ -85,7 +85,7 @@ class Statistics
             ];
             $statistic[] = $data;
         }
-        Statistics::insert($statistic);
+        VideoStatisticModel::insert($statistic);
     }
 
     private static function checkNum($num)
