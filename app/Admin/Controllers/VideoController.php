@@ -241,6 +241,9 @@ EOF;
         $publishUrl = config('app.url') . '/admin/publishToBj';
         $publishReturn = config('app.url') . '/admin/video';
         $show->html('发布')->unescape()->as(function () use ($show, $publishUrl, $publishReturn, $id) {
+            if($show->getModel()->resource_status == 1){
+                return;
+            }
             $disable = "";
             if (!$show->getModel()->resource2) {
                 $disable = "disabled";
