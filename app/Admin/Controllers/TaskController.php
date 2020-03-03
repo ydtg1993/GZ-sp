@@ -2,6 +2,7 @@
 
 namespace App\Admin\Controllers;
 
+use App\Admin\Extensions\RestartAllTask;
 use App\Admin\Extensions\StopTask;
 use App\Helper\tool;
 use App\Model\TaskModel;
@@ -96,6 +97,9 @@ class TaskController extends AdminController
             //$actions->disableEdit();
             $actions->disableDelete();
             //$actions->append(new StopTask($actions->getKey()));
+        });
+        $grid->tools(function ($tools) {
+            $tools->append(new RestartAllTask());
         });
         return $grid;
     }
