@@ -130,7 +130,11 @@ class Statistics extends Command
                     "article_id" => $article_id]);
             $i++;
             $data = (array)json_decode($result, true);
-            if (!isset($data['errno']) && $data['errno'] != 0) {
+            if(!isset($data['errno'])){
+                usleep(500000);
+                continue;
+            }
+            if (isset($data['errno']) && $data['errno'] != 0) {
                 usleep(500000);
                 continue;
             }
