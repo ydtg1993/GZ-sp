@@ -17,7 +17,6 @@ class HomeController extends Controller
 {
     public function index(Content $content)
     {
-        unlink(public_path().'/shell/statistic.sh');
         return $content
             ->title('Dashboard')
             ->description('Description...')
