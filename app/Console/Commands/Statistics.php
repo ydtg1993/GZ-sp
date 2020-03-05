@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 
 use App\Helper\tool;
 use App\Model\AccountModel;
+use App\Model\AccountStatisticModel;
 use App\Model\PublishModel;
 use App\Model\VideoModel;
 use App\Model\VideoStatisticModel;
@@ -27,6 +28,7 @@ class Statistics extends Command
      */
     protected $description = 'clear resource';
 
+    protected $today = '';
 
     /**
      * Create a new command instance.
@@ -46,19 +48,42 @@ class Statistics extends Command
     public function handle()
     {
         ini_set('memory_limit', '4096M');
+        $this->today = date('Y-m-d');
+        $check = VideoStatisticModel::whereBetween('created_at',[
+            date('Y-m-d H:i:s'),date('Y-m-d',strtotime('+1 day'))])->first();
+        if($check){
+            die('已经统计！');
+        }
+
         $accounts = $this->getAccounts();
 
-        $publishes = PublishModel::get();
-        $publishes = $publishes->toArray();
-        $today = date('Y-m-d');
+        $total = PublishModel::count();
+        $limit = 1000;
+        $page = ceil($total / $limit);
 
         $statistic = [];
+        $accountStatistic = [];
+
+        for ($i = 0; $i <= $page; $i++) {
+            $start = $i * $limit;
+            $publishes = PublishModel::offset($start)->limit($limit)->get();
+            $publishes = $publishes->toArray();
+
+            $this->deal($publishes, $accounts, $statistic,$accountStatistic);
+        }
+        VideoStatisticModel::insert($statistic);
+        AccountStatisticModel::insert($accountStatistic);
+    }
+
+    private function deal($publishes, $accounts, &$statistic,&$accountStatistic)
+    {
         foreach ($publishes as $publish) {
             $type = $publish['type'];//0养号 1推广
-            if (!isset($accounts[$publish['account_id']])) {
+            $account_id = $publish['account_id'];
+            if (!isset($accounts[$account_id])) {
                 continue;
             }
-            $account = $accounts[$publish['account_id']];
+            $account = $accounts[$account_id];
             $video = VideoModel::where('id', $publish['video_id'])->first();
             if (!$video) {
                 continue;
@@ -81,19 +106,37 @@ class Statistics extends Command
                 'share_count' => self::checkNum($data['data']['share_count']),
                 'collect_count' => self::checkNum($data['data']['collect_count']),
                 'likes_count' => self::checkNum($data['data']['likes_count']),
-                'created_at' => $today
+                'created_at' => $this->today
             ];
-            if($data['recommend_count'] == 0 &&
-            $data['comment_count'] == 0 &&
-            $data['view_count'] == 0 &&
-            $data['share_count'] == 0 &&
-            $data['collect_count'] == 0 &&
-            $data['likes_count'] == 0){
+            if ($data['recommend_count'] == 0 &&
+                $data['comment_count'] == 0 &&
+                $data['view_count'] == 0 &&
+                $data['share_count'] == 0 &&
+                $data['collect_count'] == 0 &&
+                $data['likes_count'] == 0) {
                 continue;
             }
             $statistic[] = $data;
+            /*account statistic*/
+            if(!isset($accountStatistic[$account_id])){
+                $accountStatistic[$account_id] = [
+                    'recommend_count' => self::checkNum($data['data']['recommend_count']),
+                    'comment_count' => self::checkNum($data['data']['comment_count']),
+                    'view_count' => self::checkNum($data['data']['view_count']),
+                    'share_count' => self::checkNum($data['data']['share_count']),
+                    'collect_count' => self::checkNum($data['data']['collect_count']),
+                    'likes_count' => self::checkNum($data['data']['likes_count']),
+                    'created_at' => $this->today
+                ];
+                continue;
+            }
+            $accountStatistic[$account_id]['recommend_count']+=  self::checkNum($data['data']['recommend_count']);
+            $accountStatistic[$account_id]['comment_count']+=  self::checkNum($data['data']['comment_count']);
+            $accountStatistic[$account_id]['view_count']+=  self::checkNum($data['data']['view_count']);
+            $accountStatistic[$account_id]['share_count']+=  self::checkNum($data['data']['share_count']);
+            $accountStatistic[$account_id]['collect_count']+=  self::checkNum($data['data']['collect_count']);
+            $accountStatistic[$account_id]['likes_count']+=  self::checkNum($data['data']['likes_count']);
         }
-        VideoStatisticModel::insert($statistic);
     }
 
     private static function checkNum($num)
@@ -130,7 +173,7 @@ class Statistics extends Command
                     "article_id" => $article_id]);
             $i++;
             $data = (array)json_decode($result, true);
-            if(!isset($data['errno'])){
+            if (!isset($data['errno'])) {
                 usleep(500000);
                 continue;
             }
