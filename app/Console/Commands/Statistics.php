@@ -50,7 +50,7 @@ class Statistics extends Command
         ini_set('memory_limit', '4096M');
         $this->today = date('Y-m-d');
         $check = VideoStatisticModel::whereBetween('created_at',[
-            date('Y-m-d H:i:s'),date('Y-m-d',strtotime('+1 day'))])->first();
+            date('Y-m-d 00:00:00', time()),$todayEnd= date('Y-m-d 23:59:59', time())])->first();
         if($check){
             die('已经统计！');
         }
