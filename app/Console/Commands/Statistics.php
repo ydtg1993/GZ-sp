@@ -89,23 +89,23 @@ class Statistics extends Command
                 continue;
             }
             if ($type == 0) {
-                $data = $this->requestApi($account['app_id'], $account['app_token'], $video->article_id1);
+                $d = $this->requestApi($account['app_id'], $account['app_token'], $video->article_id1);
             } else {
-                $data = $this->requestApi($account['app_id'], $account['app_token'], $video->article_id2);
+                $d = $this->requestApi($account['app_id'], $account['app_token'], $video->article_id2);
             }
-            if (empty($data)) {
+            if (empty($d)) {
                 continue;
             }
 
             $data = [
                 'video_id' => $publish['video_id'],
                 'type' => $type,
-                'recommend_count' => self::checkNum($data['data']['recommend_count']),
-                'comment_count' => self::checkNum($data['data']['comment_count']),
-                'view_count' => self::checkNum($data['data']['view_count']),
-                'share_count' => self::checkNum($data['data']['share_count']),
-                'collect_count' => self::checkNum($data['data']['collect_count']),
-                'likes_count' => self::checkNum($data['data']['likes_count']),
+                'recommend_count' => self::checkNum($d['data']['recommend_count']),
+                'comment_count' => self::checkNum($d['data']['comment_count']),
+                'view_count' => self::checkNum($d['data']['view_count']),
+                'share_count' => self::checkNum($d['data']['share_count']),
+                'collect_count' => self::checkNum($d['data']['collect_count']),
+                'likes_count' => self::checkNum($d['data']['likes_count']),
                 'created_at' => $this->today
             ];
             if ($data['recommend_count'] == 0 &&
@@ -120,22 +120,22 @@ class Statistics extends Command
             /*account statistic*/
             if(!isset($accountStatistic[$account_id])){
                 $accountStatistic[$account_id] = [
-                    'recommend_count' => self::checkNum($data['data']['recommend_count']),
-                    'comment_count' => self::checkNum($data['data']['comment_count']),
-                    'view_count' => self::checkNum($data['data']['view_count']),
-                    'share_count' => self::checkNum($data['data']['share_count']),
-                    'collect_count' => self::checkNum($data['data']['collect_count']),
-                    'likes_count' => self::checkNum($data['data']['likes_count']),
+                    'recommend_count' => self::checkNum($d['data']['recommend_count']),
+                    'comment_count' => self::checkNum($d['data']['comment_count']),
+                    'view_count' => self::checkNum($d['data']['view_count']),
+                    'share_count' => self::checkNum($d['data']['share_count']),
+                    'collect_count' => self::checkNum($d['data']['collect_count']),
+                    'likes_count' => self::checkNum($d['data']['likes_count']),
                     'created_at' => $this->today
                 ];
                 continue;
             }
-            $accountStatistic[$account_id]['recommend_count']+=  self::checkNum($data['data']['recommend_count']);
-            $accountStatistic[$account_id]['comment_count']+=  self::checkNum($data['data']['comment_count']);
-            $accountStatistic[$account_id]['view_count']+=  self::checkNum($data['data']['view_count']);
-            $accountStatistic[$account_id]['share_count']+=  self::checkNum($data['data']['share_count']);
-            $accountStatistic[$account_id]['collect_count']+=  self::checkNum($data['data']['collect_count']);
-            $accountStatistic[$account_id]['likes_count']+=  self::checkNum($data['data']['likes_count']);
+            $accountStatistic[$account_id]['recommend_count']+=  self::checkNum($d['data']['recommend_count']);
+            $accountStatistic[$account_id]['comment_count']+=  self::checkNum($d['data']['comment_count']);
+            $accountStatistic[$account_id]['view_count']+=  self::checkNum($d['data']['view_count']);
+            $accountStatistic[$account_id]['share_count']+=  self::checkNum($d['data']['share_count']);
+            $accountStatistic[$account_id]['collect_count']+=  self::checkNum($d['data']['collect_count']);
+            $accountStatistic[$account_id]['likes_count']+=  self::checkNum($d['data']['likes_count']);
         }
     }
 
