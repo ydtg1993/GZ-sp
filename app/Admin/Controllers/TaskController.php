@@ -69,7 +69,16 @@ class TaskController extends AdminController
             }
             return new Table(['标题', '作者', '详情', '发布时间'], $videos);
         });
-        $grid->column('url', '采集地址')->link()->style('width:200px');
+        $grid->column('url', '采集地址')->style('width:200px')->display(function ($url) {
+            $urls = explode(';',$url);
+            $html = '';
+            foreach ($urls as $url){
+                $html.= <<<EOF
+<a href="{$url}">{$url}</a></br>
+EOF;
+            }
+            return $html;
+        });
         $grid->column('time', '采集间隔时间');
         $grid->column('account', 'yutuber账号')->style('width:200px');
         $grid->column('created_at', '创建时间');
@@ -197,11 +206,14 @@ class TaskController extends AdminController
 
         $form->ignore('category');
         $form->saving(function (Form $form){
-            $url = $form->model()->url;
-            $check = TaskModel::where('url', $url)->first();
-            if($check){
-                throw new \Exception('目标地址重复 已有相同任务在运行');
+            $urls = explode(PHP_EOL,$form->url);
+            foreach ($urls as $url) {
+                $check = TaskModel::where('url', $url)->first();
+                if ($check) {
+                    throw new \Exception('目标地址重复 已有相同任务在运行');
+                }
             }
+            $form->url = join(";",$urls);
         });
         $form->saved(function (Form $form) {
             $id = $form->model()->id;
@@ -218,7 +230,7 @@ class TaskController extends AdminController
         $form->display('id', __('ID'));
         $form->select('task_type', '任务类型')->options([0 => '单个视频', 1 => '定时任务']);
         $form->text('account', 'yutuber账户');
-        $form->url('url', '目标地址');
+        $form->textarea('url', '目标地址');
         $form->number('time', '采集任务间隔时间(小时)')->min(1)->default(1);
         $form->divider('视频切割');
         $form->number('cut_time', '切割时间(分钟)')->min(1)->default(3);
