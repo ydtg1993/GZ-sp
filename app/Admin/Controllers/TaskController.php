@@ -210,7 +210,7 @@ EOF;
             foreach ($urls as $url) {
                 $check = TaskModel::where('url', $url)->first();
                 if ($check) {
-                    throw new \Exception('目标地址重复 已有相同任务在运行');
+                    throw new \Exception('目标地址重复{'.$url.'} 已有相同任务在运行');
                 }
             }
             $form->url = join(";",$urls);
