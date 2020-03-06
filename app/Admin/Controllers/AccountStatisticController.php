@@ -51,6 +51,10 @@ class AccountStatisticController extends AdminController
             $filter->disableIdFilter();
             $filter->between('created_at', '创建时间')->datetime();
         });
+        $grid->actions(function ($actions) {
+            $actions->disableEdit();
+            $actions->disableDelete();
+        });
         return $grid;
     }
 
