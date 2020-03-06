@@ -2,6 +2,7 @@
 
 namespace App\Admin\Controllers;
 
+use App\Model\AccountModel;
 use App\Model\AccountStatisticModel;
 use Carbon\Carbon;
 use Encore\Admin\Controllers\AdminController;
@@ -28,6 +29,13 @@ class AccountStatisticController extends AdminController
             [Carbon::parse('1 days ago')->toDateString(),Carbon::parse('today')->toDateString()]);
 
         $grid->column('id', __('ID'))->sortable();
+        $grid->column('account_id', '账户名')->display(function ($id){
+            $account = AccountModel::where('id',$id)->first();
+            if(!$account){
+                return '';
+            }
+            return $account->name;
+        });
         $grid->column('recommend_count', '推荐量');
         $grid->column('comment_count', '评论量');
         $grid->column('view_count', '阅读/播放量');
