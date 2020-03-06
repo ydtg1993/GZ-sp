@@ -17,4 +17,6 @@ Route::group([
     $router->get('/publish/{id}','VideoController@publish');
     $router->post('/publishToBj','VideoController@publishToBj');
     $router->resource('/account', 'AccountController');
+
+    $router->resource('/videoStatistic','VideoStatisticController');
 });
