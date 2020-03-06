@@ -120,6 +120,7 @@ class Statistics extends Command
             /*account statistic*/
             if(!isset($accountStatistic[$account_id])){
                 $accountStatistic[$account_id] = [
+                    'account_id' => $account_id,
                     'recommend_count' => self::checkNum($d['data']['recommend_count']),
                     'comment_count' => self::checkNum($d['data']['comment_count']),
                     'view_count' => self::checkNum($d['data']['view_count']),
