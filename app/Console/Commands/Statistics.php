@@ -118,8 +118,9 @@ class Statistics extends Command
             }
             $statistic[] = $data;
             /*account statistic*/
-            if(!isset($accountStatistic[$account_id])){
-                $accountStatistic[$account_id] = [
+            $account_key = $account_id.':';
+            if(!isset($accountStatistic[$account_key])){
+                $accountStatistic[$account_key] = [
                     'account_id' => $account_id,
                     'recommend_count' => self::checkNum($d['data']['recommend_count']),
                     'comment_count' => self::checkNum($d['data']['comment_count']),
@@ -131,12 +132,12 @@ class Statistics extends Command
                 ];
                 continue;
             }
-            $accountStatistic[$account_id]['recommend_count']+=  self::checkNum($d['data']['recommend_count']);
-            $accountStatistic[$account_id]['comment_count']+=  self::checkNum($d['data']['comment_count']);
-            $accountStatistic[$account_id]['view_count']+=  self::checkNum($d['data']['view_count']);
-            $accountStatistic[$account_id]['share_count']+=  self::checkNum($d['data']['share_count']);
-            $accountStatistic[$account_id]['collect_count']+=  self::checkNum($d['data']['collect_count']);
-            $accountStatistic[$account_id]['likes_count']+=  self::checkNum($d['data']['likes_count']);
+            $accountStatistic[$account_key]['recommend_count']+=  self::checkNum($d['data']['recommend_count']);
+            $accountStatistic[$account_key]['comment_count']+=  self::checkNum($d['data']['comment_count']);
+            $accountStatistic[$account_key]['view_count']+=  self::checkNum($d['data']['view_count']);
+            $accountStatistic[$account_key]['share_count']+=  self::checkNum($d['data']['share_count']);
+            $accountStatistic[$account_key]['collect_count']+=  self::checkNum($d['data']['collect_count']);
+            $accountStatistic[$account_key]['likes_count']+=  self::checkNum($d['data']['likes_count']);
         }
     }
 
