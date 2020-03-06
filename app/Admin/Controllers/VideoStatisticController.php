@@ -26,7 +26,7 @@ class VideoStatisticController extends AdminController
     {
         $grid = new Grid(new VideoStatisticModel());
         $grid->model()->orderBy('created_at', 'desc')->whereBetween('created_at',
-            [Carbon::parse('2 days ago')->toDateString(),Carbon::parse('2 days ago')->toDateString()]);
+            [Carbon::parse('2 days ago')->toDateString(),Carbon::parse('today')->toDateString()]);
 
         $grid->column('id', __('ID'))->sortable();
         $grid->column('video_id', '视频详情')->sortable();
