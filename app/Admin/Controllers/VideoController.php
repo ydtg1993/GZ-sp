@@ -58,7 +58,7 @@ EOF;
         });
         $grid->column('id', __('ID'))->sortable();
         $grid->column('title', '标题')->display(function ($title) {
-            $title2 = preg_replace("/\"|\'|\n/","",$title);
+            $title2 = preg_replace("/\"|\'|\n/", "", $title);
             return <<<EOF
 <div title="$title2" style='width:150px;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;'>$title</div>
 EOF;
@@ -81,24 +81,24 @@ EOF;
             0 => 'default',
             1 => 'success',
         ]);
-        $grid->column('resource','原视频')->display(function($resource){
-            if($this->resource_status == 1){
+        $grid->column('resource', '原视频')->display(function ($resource) {
+            if ($this->resource_status == 1) {
                 return '已删除';
             }
-            $source = config('app.url') . '/' .$resource;
+            $source = config('app.url') . '/' . $resource;
             return <<<EOF
 <a href="javascript:void(0);" onclick=openVideo('{$source}')>查看</a>
 <div id="{$source}"></div>
 EOF;
         });
-        $grid->column('resource2','编辑视频')->display(function($resource){
-            if($this->resource_status == 1){
+        $grid->column('resource2', '编辑视频')->display(function ($resource) {
+            if ($this->resource_status == 1) {
                 return '已删除';
             }
-            if(!$resource){
+            if (!$resource) {
                 return "暂无视频";
             }
-            $source = config('app.url') . '/' .$resource;
+            $source = config('app.url') . '/' . $resource;
             return <<<EOF
 <a href="javascript:void(0);" onclick=openVideo('{$source}')>查看</a>
 <div id="{$source}"></div>
@@ -124,26 +124,27 @@ EOF;
      */
     public function show($id, Content $content)
     {
-        $script = config('app.url').'/lib/echarts.min.js';
+        $script = config('app.url') . '/lib/echarts.min.js';
         $html = <<<EOF
 <script src="{$script}"></script>%s
 EOF;
 
-        $video = VideoModel::where('id',$id)->first();
-        $publishes = PublishModel::where('video_id',$id)->orderBy('type')->get();
+        $video = VideoModel::where('id', $id)->first();
+        $publishes = PublishModel::where('video_id', $id)->orderBy('type')->get();
         $publishes = $publishes->toArray();
         $chartsPanel = '';
-        foreach ($publishes as $publish){
+        foreach ($publishes as $publish) {
             $account_id = $publish['account_id'];
             $type = $publish['type'];
-            $account = AccountModel::where('id',$account_id)->first();
-            $result = tool::curlRequest("http://baijiahao.baidu.com/builderinner/open/resource/query/articleStatistics",[
-                "app_id"=>$account->app_id,
-                "app_token"=>$account->app_token,
-                "article_id"=>$type == 0 ? $video->article_id1 : $video->article_id2
+            $article_id = $type == 0 ? (int)$video->article_id1 : (int)$video->article_id2;
+            $account = AccountModel::where('id', $account_id)->first();
+            $result = tool::curlRequest("http://baijiahao.baidu.com/builderinner/open/resource/query/articleStatistics", [
+                "app_id" => $account->app_id,
+                "app_token" => $account->app_token,
+                "article_id" => $article_id
             ]);
-            $data = json_decode($result,true);
-            if(!isset($data['errno']) && $data['errno'] != 0){
+            $data = json_decode($result, true);
+            if (!isset($data['errno']) && $data['errno'] != 0) {
                 continue;
             }
             $title = $type == 0 ? '养号视频实时数据' : '推广视频实时数据';
@@ -153,7 +154,7 @@ EOF;
             $share_count = $data['data']['share_count'] > 0 ? $data['data']['share_count'] : 0;
             $collect_count = $data['data']['collect_count'] > 0 ? $data['data']['collect_count'] : 0;
             $likes_count = $data['data']['likes_count'] > 0 ? $data['data']['likes_count'] : 0;
-                $panel = <<<EOF
+            $panel = <<<EOF
 <div id="chart{$type}" style="height:400px;"></div>
 <script type="text/javascript">
         var myChart = echarts.init(document.getElementById('chart{$type}'));
@@ -179,10 +180,55 @@ EOF;
         myChart.setOption(option);
 </script>
 EOF;
-            $chartsPanel.= $panel;
+            $chartsPanel .= $panel;
+
+            /*账户状态查询*/
+            $result = tool::curlRequest("http://baijiahao.baidu.com/builderinner/open/resource/query/status", [
+                "app_id" => $account->app_id,
+                "app_token" => $account->app_token,
+                "article_id" => $article_id
+            ]);
+            $data = json_decode($result, true);
+            if (!isset($data['errno']) && $data['errno'] != 0) {
+                continue;
+            }
+            $panel = <<<EOF
+<div class="col-md-4"><div class="box box-default">
+    <div class="box-header with-border">
+        <h3 class="box-title">文章状态</h3>
+        <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+            </button>
+            <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+        </div>
+    </div>
+    <!-- /.box-header -->
+    <div class="box-body">
+        <div class="table-responsive">
+            <table class="table table-striped">
+<tbody>
+%s
+</tbody></table>
+</div></div></div></div>
+EOF;
+
+            if (!isset($data['data'][$article_id])) {
+                $panel = sprintf($panel, '<tr><td width="120px"></td><td>文章不存在</td></tr>');
+                $chartsPanel .= $panel;
+                continue;
+            }
+            $message = <<<EOF
+<tr><td width="120px">状态</td><td>{$data['data'][$article_id]['status']}</td></tr>
+<tr><td width="120px">地址</td><td>{$data['data'][$article_id]['url']}</td></tr>
+EOF;
+            if(isset($data['data'][$article_id]['msg'])){
+                $message .= '<tr><td width="120px">审核原因</td><td>'.$data['data'][$article_id]['msg'].'</td></tr>';
+            }
+            $panel = sprintf($panel, $message);
+            $chartsPanel .= $panel;
         }
 
-        $html = sprintf($html,$chartsPanel);
+        $html = sprintf($html, $chartsPanel);
         return $content
             ->header('视频')
             ->description('视频详情')
@@ -211,16 +257,16 @@ EOF;
         $show = new Show(VideoModel::findOrFail($id));
         $show->title('标题');
         $show->avatar()->unescape()->as(function ($avatar) {
-            if(preg_match("/^http.*/",$avatar)){
+            if (preg_match("/^http.*/", $avatar)) {
                 $url = $avatar;
-            }else{
-                $url = config('app.url').'/upload/'.$avatar;
+            } else {
+                $url = config('app.url') . '/upload/' . $avatar;
             }
             return "<img width='300px' src='{$url}' />";
         });
         $show->tags('标签');
-        $show->resource('原视频')->unescape()->as(function ($resource){
-            $source = config('app.url') . '/' .$resource;
+        $show->resource('原视频')->unescape()->as(function ($resource) {
+            $source = config('app.url') . '/' . $resource;
             return <<<EOF
 <video width="350" height="240" controls>
     <source src="{$source}" type="video/mp4">
@@ -228,8 +274,8 @@ EOF;
 </video>
 EOF;
         });
-        $show->resource2('已编辑视频')->unescape()->as(function ($resource){
-            $source = config('app.url') . '/' .$resource;
+        $show->resource2('已编辑视频')->unescape()->as(function ($resource) {
+            $source = config('app.url') . '/' . $resource;
             return <<<EOF
 <video width="350" height="240" controls>
     <source src="{$source}" type="video/mp4">
@@ -241,7 +287,7 @@ EOF;
         $publishUrl = config('app.url') . '/admin/publishToBj';
         $publishReturn = config('app.url') . '/admin/video';
         $show->html('发布')->unescape()->as(function () use ($show, $publishUrl, $publishReturn, $id) {
-            if($show->getModel()->resource_status == 1){
+            if ($show->getModel()->resource_status == 1) {
                 return;
             }
             $disable = "";
@@ -297,8 +343,8 @@ EOF;
     {
         $videoId = (int)$request->input('id');
         $toAccountType = (int)$request->input('toAccountType');
-        $flag = PublishModel::where(['video_id'=>$videoId,'type'=>$toAccountType])->exists();
-        if($flag){
+        $flag = PublishModel::where(['video_id' => $videoId, 'type' => $toAccountType])->exists();
+        if ($flag) {
             return response()->json(['status' => 2, 'message' => '该视频已经发布过']);
         }
         $accounts = AccountModel::where('type', $toAccountType)->inRandomOrder()->get();
@@ -314,10 +360,10 @@ EOF;
                 if ($toAccountType == 1) {
                     $resource = config('app.url') . '/' . $video->resource2;
                 }
-                if(preg_match("/^http.*/",$video->avatar)){
+                if (preg_match("/^http.*/", $video->avatar)) {
                     $avatar = $video->avatar;
-                }else{
-                    $avatar = config('app.url').'/upload/'.$video->avatar;
+                } else {
+                    $avatar = config('app.url') . '/upload/' . $video->avatar;
                 }
                 $result = tool::curlRequest(
                     "http://baijiahao.baidu.com/builderinner/open/resource/video/publish",
@@ -339,12 +385,12 @@ EOF;
                 PublishModel::insert([
                     'video_id' => $videoId,
                     'account_id' => $account->id,
-                    'type'=>$toAccountType
+                    'type' => $toAccountType
                 ]);
                 if ($toAccountType == 0) {
-                    VideoModel::where('id', $videoId)->update(['publish_status1' => 1,'article_id1'=>$result['data']['article_id']]);
+                    VideoModel::where('id', $videoId)->update(['publish_status1' => 1, 'article_id1' => $result['data']['article_id']]);
                 } else {
-                    VideoModel::where('id', $videoId)->update(['publish_status2' => 1,'article_id2'=>$result['data']['article_id']]);
+                    VideoModel::where('id', $videoId)->update(['publish_status2' => 1, 'article_id2' => $result['data']['article_id']]);
                 }
                 return response()->json(['status' => 1, 'message' => '发布成功']);
             }
@@ -360,9 +406,9 @@ EOF;
     protected function form($id = '')
     {
         $form = new Form(new VideoModel());
-        $form->saving(function (Form $form){
+        $form->saving(function (Form $form) {
             $len = mb_strlen($form->title);
-            if($len < 8 || $len > 40){
+            if ($len < 8 || $len > 40) {
                 throw new \Exception('视频标题，限定 8-40 个中英文字符以内');
                 return;
             }
@@ -373,8 +419,8 @@ EOF;
         });
         $form->display('id', __('ID'));
         $help = "视频标题，限定 8-40 个中英文字符以内";
-        if($id){
-            $video = VideoModel::where('id',$id)->first();
+        if ($id) {
+            $video = VideoModel::where('id', $id)->first();
             $len = mb_strlen($video->title);
             $help = "视频标题，限定 8-40 个中英文字符以内 当前长度({$len})";
         }
@@ -465,7 +511,7 @@ EOF;
         if (file_exists(BASE_PATH . $video->resource2)) {
             @unlink(BASE_PATH . $video->resource2);
         }
-        DownloadModel::where('origin_id',$video->origin_id)->delete();
+        DownloadModel::where('origin_id', $video->origin_id)->delete();
         if ($this->form()->destroy($id)) {
             return response()->json([
                 'status' => true,
