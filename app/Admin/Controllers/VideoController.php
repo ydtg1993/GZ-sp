@@ -219,10 +219,12 @@ EOF;
             }
             $message = <<<EOF
 <tr><td width="120px">状态</td><td>{$data['data'][$article_id]['status']}</td></tr>
-<tr><td width="120px">地址</td><td>{$data['data'][$article_id]['url']}</td></tr>
 EOF;
             if(isset($data['data'][$article_id]['msg'])){
                 $message .= '<tr><td width="120px">审核原因</td><td>'.$data['data'][$article_id]['msg'].'</td></tr>';
+            }
+            if(isset($data['data'][$article_id]['url'])){
+                $message .= '<tr><td width="120px">地址</td><td>'.$data['data'][$article_id]['url'].'</td></tr>';
             }
             $panel = sprintf($panel, $message);
             $chartsPanel .= $panel;
