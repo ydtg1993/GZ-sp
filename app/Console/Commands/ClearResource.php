@@ -52,6 +52,9 @@ class ClearResource extends Command
             if (file_exists(public_path() . '/' . $video->resource2)) {
                 @unlink(public_path() . '/' . $video->resource2);
             }
+            if(file_exists(public_path().'/upload/'.$video->avatar)){
+                @unlink(public_path().'/upload/'.$video->avatar);
+            }
             VideoModel::where('id',$video->id)->update(['resource_status'=>1]);
         }
     }
