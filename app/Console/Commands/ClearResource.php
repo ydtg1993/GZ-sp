@@ -1,6 +1,7 @@
 <?php
 namespace App\Console\Commands;
 
+use App\Model\DownloadModel;
 use App\Model\VideoModel;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
@@ -43,7 +44,7 @@ class ClearResource extends Command
         $tree_days_ago = Carbon::parse('3 days ago')->toDateTimeString();
         $videos = VideoModel::where([
             ['created_at','<=',$tree_days_ago],
-            //['resource_status','=',0]
+            ['resource_status','=',0]
         ])->get();
         foreach ($videos as $video){
             if (file_exists(public_path() . '/' . $video->resource)) {
@@ -56,6 +57,17 @@ class ClearResource extends Command
                 @unlink(public_path().'/upload/'.$video->avatar);
             }
             VideoModel::where('id',$video->id)->update(['resource_status'=>1]);
+        }
+
+        $two_days_ago = Carbon::parse('2 days ago')->toDateTimeString();
+        $downloads = DownloadModel::where([
+            ['created_at','<=',$two_days_ago],
+            ['status','>=',2]
+        ])->get();
+        foreach ($downloads as $download){
+            if (file_exists(public_path() . '/' . $download->resource)) {
+                @unlink(public_path() . '/' . $download->resource);
+            }
         }
     }
 }
