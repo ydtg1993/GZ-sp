@@ -43,7 +43,7 @@ class ClearResource extends Command
         $tree_days_ago = Carbon::parse('3 days ago')->toDateTimeString();
         $videos = VideoModel::where([
             ['created_at','<=',$tree_days_ago],
-            ['resource_status','=',0]
+            //['resource_status','=',0]
         ])->get();
         foreach ($videos as $video){
             if (file_exists(public_path() . '/' . $video->resource)) {
