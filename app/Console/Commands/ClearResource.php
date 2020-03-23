@@ -58,11 +58,9 @@ class ClearResource extends Command
             }
             VideoModel::where('id',$video->id)->update(['resource_status'=>1]);
         }
-
-        $two_days_ago = Carbon::parse('2 days ago')->toDateTimeString();
+        
         $downloads = DownloadModel::where([
-            ['created_at','<=',$two_days_ago],
-            ['status','>=',2]
+            ['created_at','<=',$tree_days_ago],
         ])->get();
         foreach ($downloads as $download){
             if (file_exists(public_path() . '/' . $download->resource)) {
