@@ -513,6 +513,10 @@ EOF;
         if (file_exists(BASE_PATH . $video->resource2)) {
             @unlink(BASE_PATH . $video->resource2);
         }
+        $download = DownloadModel::where('origin_id', $video->origin_id)->first();
+        if (file_exists(BASE_PATH . $download->resource2)) {
+            @unlink(BASE_PATH . $download->resource2);
+        }
         DownloadModel::where('origin_id', $video->origin_id)->delete();
         if ($this->form()->destroy($id)) {
             return response()->json([

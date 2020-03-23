@@ -58,7 +58,7 @@ class ClearResource extends Command
             }
             VideoModel::where('id',$video->id)->update(['resource_status'=>1]);
         }
-        
+
         $downloads = DownloadModel::where([
             ['created_at','<=',$tree_days_ago],
         ])->get();
