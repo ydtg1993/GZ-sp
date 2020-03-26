@@ -207,12 +207,12 @@ EOF;
         $form->ignore('category');
         $form->saving(function (Form $form){
             $urls = explode(PHP_EOL,$form->url);
-            foreach ($urls as $url) {
+            /*foreach ($urls as $url) {
                 $check = TaskModel::where('url', $url)->first();
                 if ($check) {
                     throw new \Exception('目标地址重复{'.$url.'} 已有相同任务在运行');
                 }
-            }
+            }*/
             $form->url = join(";",$urls);
         });
         $form->saved(function (Form $form) {
