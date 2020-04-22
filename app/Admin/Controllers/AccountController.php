@@ -5,6 +5,8 @@ namespace App\Admin\Controllers;
 use App\Model\AccountModel;
 use App\Model\AccountRoleModel;
 use App\Model\AdminUserModel;
+use App\Model\PublishModel;
+use Carbon\Carbon;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Controllers\HasResourceActions;
 use Encore\Admin\Grid;
@@ -141,6 +143,13 @@ class AccountController extends AdminController
         $show = new Show(AccountModel::findOrFail($id));
 
         $show->id('ID');
+        $show->limit('当天限制次数')->as(function ($id) {
+            $limit = PublishModel::whereBetween('created_at', [
+                Carbon::today()->startOfDay(),
+                Carbon::today()->endOfDay()
+            ])->where('account_id', $id)->count();
+            return $limit;
+        });
         $show->created_at('Created at');
         $show->updated_at('Updated at');
 

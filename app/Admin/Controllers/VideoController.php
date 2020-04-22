@@ -364,7 +364,7 @@ EOF;
         }
 
         $accounts = AccountModel::where('type', $toAccountType)->where('operate_id',Admin::user()->id)->inRandomOrder()->get();
-        
+
         foreach ($accounts as $account) {
             $limit = PublishModel::whereBetween('created_at', [
                 Carbon::today()->startOfDay(),
