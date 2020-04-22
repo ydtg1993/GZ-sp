@@ -362,13 +362,9 @@ EOF;
         if ($flag) {
             return response()->json(['status' => 2, 'message' => '该视频已经发布过']);
         }
-        $U = AccountRoleModel::where('user_id',Admin::user()->id)->first();
-        if($U->role_id > 1){
-            $accounts = AccountModel::where('type', $toAccountType)->where('operate_id',Admin::user()->id)->inRandomOrder()->get();
-        }else{
-            $accounts = AccountModel::where('type', $toAccountType)->where('operate_id',2)->inRandomOrder()->get();
-        }
 
+        $accounts = AccountModel::where('type', $toAccountType)->where('operate_id',Admin::user()->id)->inRandomOrder()->get();
+        
         foreach ($accounts as $account) {
             $limit = PublishModel::whereBetween('created_at', [
                 Carbon::today()->startOfDay(),

@@ -78,7 +78,7 @@ class AccountController extends AdminController
 
         $U = AccountRoleModel::where('user_id',Admin::user()->id)->first();
         if($U->role_id > 1){
-            $form->hidden('operate_id',Admin::user()->id);
+            $form->hidden('operate_id')->value(Admin::user()->id);
         }else {
             $A = AdminUserModel::get();
             $directors = [];
@@ -168,7 +168,7 @@ class AccountController extends AdminController
 
         $U = AccountRoleModel::where('user_id',Admin::user()->id)->first();
         if($U->role_id > 1){
-            $form->hidden('operate_id',Admin::user()->id);
+            $form->hidden('operate_id')->value(Admin::user()->id);
         }else {
             $A = AdminUserModel::get();
             $directors = [];
