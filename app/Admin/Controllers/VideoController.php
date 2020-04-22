@@ -4,6 +4,8 @@ namespace App\Admin\Controllers;
 
 use App\Helper\tool;
 use App\Model\AccountModel;
+use App\Model\AccountRoleModel;
+use App\Model\AdminUserModel;
 use App\Model\CategoryModel;
 use App\Model\DownloadModel;
 use App\Model\PublishModel;
@@ -14,6 +16,7 @@ use Carbon\Carbon;
 use DenDroGram\Controller\AdjacencyList;
 use DenDroGram\Controller\DenDroGram;
 use Encore\Admin\Controllers\AdminController;
+use Encore\Admin\Facades\Admin;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Layout\Content;
@@ -38,7 +41,13 @@ class VideoController extends AdminController
     protected function grid()
     {
         $grid = new Grid(new VideoModel);
-        $grid->model()->orderBy('created_at', 'desc');
+        $U = AccountRoleModel::where('user_id',Admin::user()->id)->first();
+        if($U->role_id > 1){
+            $grid->model()->where('operate_id',Admin::user()->id)->orderBy('created_at', 'desc');
+        }else{
+            $grid->model()->orderBy('created_at', 'desc');
+        }
+
         $grid->header(function ($query) {
             return <<<EOF
 <script>function openVideo(source) {
@@ -63,8 +72,12 @@ EOF;
 <div title="$title2" style='width:150px;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;'>$title</div>
 EOF;
         });
-        $grid->column('author', '作者')->display(function ($title) {
+        /*$grid->column('author', '作者')->display(function ($title) {
             return "<div title={$title} style='width:150px;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;'>$title</div>";
+        });*/
+        $grid->column('operate_id', '操作人')->display(function ($id) {
+            $a = AdminUserModel::where('id',$id)->first();
+            return "<div title={$a->username} style='width:70px;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;'>$a->username</div>";
         });
         $grid->column('avatar')->image();
         $grid->column('publish_status1', '养号发布')->using([
@@ -349,7 +362,12 @@ EOF;
         if ($flag) {
             return response()->json(['status' => 2, 'message' => '该视频已经发布过']);
         }
-        $accounts = AccountModel::where('type', $toAccountType)->inRandomOrder()->get();
+        $U = AccountRoleModel::where('user_id',Admin::user()->id)->first();
+        if($U->role_id > 1){
+            $accounts = AccountModel::where('type', $toAccountType)->where('operate_id',Admin::user()->id)->inRandomOrder()->get();
+        }else{
+            $accounts = AccountModel::where('type', $toAccountType)->where('operate_id',2)->inRandomOrder()->get();
+        }
 
         foreach ($accounts as $account) {
             $limit = PublishModel::whereBetween('created_at', [
@@ -387,7 +405,8 @@ EOF;
                 PublishModel::insert([
                     'video_id' => $videoId,
                     'account_id' => $account->id,
-                    'type' => $toAccountType
+                    'type' => $toAccountType,
+                    'operate_id' => Admin::user()->id
                 ]);
                 if ($toAccountType == 0) {
                     VideoModel::where('id', $videoId)->update(['publish_status1' => 1, 'article_id1' => $result['data']['article_id']]);
@@ -430,7 +449,12 @@ EOF;
         $form->image('avatar', '封面')->help('封面图尺寸不小于660*370')->uniqueName();
         $form->hidden('tags');
 
-        $tags = TagModel::get();
+        $U = AccountRoleModel::where('user_id',Admin::user()->id)->first();
+        if($U->role_id > 1){
+            $tags = TagModel::where('operate_id',Admin::user()->id)->get();
+        }else{
+            $tags = TagModel::where('operate_id',2)->get();
+        }
         $tagButton = "<div class='btn btn-primary v-tag' style='margin-right: 8px;margin-bottom: 8px'>%s</div>";
         $tagHtml = '';
         foreach ($tags as $tag) {

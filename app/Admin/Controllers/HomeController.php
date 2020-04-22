@@ -2,16 +2,14 @@
 
 namespace App\Admin\Controllers;
 
-use App\Helper\tool;
 use App\Http\Controllers\Controller;
-use DenDroGram\Controller\AdjacencyList;
-use DenDroGram\Controller\DenDroGram;
-use DenDroGram\Controller\NestedSet;
+use App\Model\AccountRoleModel;
 use Encore\Admin\Controllers\Dashboard;
+use Encore\Admin\Facades\Admin;
 use Encore\Admin\Layout\Column;
 use Encore\Admin\Layout\Content;
 use Encore\Admin\Layout\Row;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
 {

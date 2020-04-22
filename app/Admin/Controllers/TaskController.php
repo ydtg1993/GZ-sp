@@ -5,10 +5,12 @@ namespace App\Admin\Controllers;
 use App\Admin\Extensions\RestartAllTask;
 use App\Admin\Extensions\StopTask;
 use App\Helper\tool;
+use App\Model\AccountRoleModel;
 use App\Model\TaskModel;
 use App\Model\VideoModel;
 use Carbon\Carbon;
 use Encore\Admin\Controllers\AdminController;
+use Encore\Admin\Facades\Admin;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Layout\Content;
@@ -32,7 +34,15 @@ class TaskController extends AdminController
     protected function grid()
     {
         $grid = new Grid(new TaskModel);
-        $grid->model()->orderBy('created_at', 'desc')->whereIn('status',[0,1,3,4,5]);
+        $U = AccountRoleModel::where('user_id',Admin::user()->id)->first();
+        if($U->role_id > 1){
+            $grid->model()->where('operate_id',Admin::user()->id)->orderBy('created_at', 'desc')
+                ->orderByRaw( "FIELD(status, 0,1,3,4,2)" );
+        }else{
+            $grid->model()->orderBy('created_at', 'desc')
+                ->orderByRaw( "FIELD(status, 0,1,3,4,2)" );
+        }
+
         $grid->column('id', __('ID'))->sortable();
         $grid->column('task_type', '任务类型')->display(function ($type) {
             if ($type == 0) {
@@ -187,6 +197,7 @@ EOF;
 
         $form->display('created_at', __('Created At'));
         $form->display('updated_at', __('Updated At'));
+        $form->hidden('operate_id')->value(Admin::user()->id);
 
         return $content
             ->header('百家账户')
@@ -256,7 +267,7 @@ EOF;
 
         $form->display('created_at', __('Created At'));
         $form->display('updated_at', __('Updated At'));
-
+        $form->hidden('operate_id')->value(Admin::user()->id);
         return $form;
     }
 }

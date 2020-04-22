@@ -3,6 +3,8 @@
 namespace App\Admin\Controllers;
 
 use App\Model\AccountModel;
+use App\Model\AccountRoleModel;
+use App\Model\AdminUserModel;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Controllers\HasResourceActions;
 use Encore\Admin\Grid;
@@ -33,6 +35,10 @@ class AccountController extends AdminController
             0=> '养号',
             1 => '推广号'
         ]);
+        $grid->column('operate_id','操作人')->display(function ($id){
+            $a = AdminUserModel::where('id',$id)->first();
+            return $a->username;
+        });
 
         //$grid->disableCreateButton();
         $grid->disableExport();
@@ -69,6 +75,19 @@ class AccountController extends AdminController
         $form->text('name', '账户名称');
         $form->text('app_id', 'app_id');
         $form->text('app_token', 'app_token');
+
+        $U = AccountRoleModel::where('user_id',Admin::user()->id)->first();
+        if($U->role_id > 1){
+            $form->hidden('operate_id',Admin::user()->id);
+        }else {
+            $A = AdminUserModel::get();
+            $directors = [];
+            foreach ($A as $v) {
+                $directors[$v->id] = $v->username;
+            }
+            $form->select('operate_id', '操作人')->options($directors);
+        }
+
         $states = [
             'on' => ['value' => 0, 'text' => '养号', 'color' => 'default'],
             'off'  => ['value' => 1, 'text' => '推广', 'color' => 'success'],
@@ -146,6 +165,19 @@ class AccountController extends AdminController
             'off'  => ['value' => 1, 'text' => '推广', 'color' => 'success'],
         ];
         $form->switch('type','类型')->states($states);
+
+        $U = AccountRoleModel::where('user_id',Admin::user()->id)->first();
+        if($U->role_id > 1){
+            $form->hidden('operate_id',Admin::user()->id);
+        }else {
+            $A = AdminUserModel::get();
+            $directors = [];
+            foreach ($A as $v) {
+                $directors[$v->id] = $v->username;
+            }
+            $form->select('operate_id', '操作人')->options($directors);
+        }
+
         $form->display('created_at', __('Created At'));
         $form->display('updated_at', __('Updated At'));
         $form->tools(function (Form\Tools $tools) {

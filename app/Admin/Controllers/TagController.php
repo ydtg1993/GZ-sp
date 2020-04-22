@@ -2,6 +2,7 @@
 
 namespace App\Admin\Controllers;
 
+use App\Model\AccountRoleModel;
 use App\Model\TagModel;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Controllers\HasResourceActions;
@@ -25,6 +26,12 @@ class TagController extends AdminController
     public function index(Content $content)
     {
         $grid = new Grid(new TagModel());
+        $U = AccountRoleModel::where('user_id',Admin::user()->id)->first();
+        if($U->role_id > 1){
+            $grid->model()->where('operate_id',Admin::user()->id);
+        }else{
+            $grid->model()->where('operate_id',2);
+        }
         $grid->column('id', __('ID'))->sortable();
         $grid->column('name','标签名');
 
@@ -60,7 +67,7 @@ class TagController extends AdminController
             $tools->disableView();
         });
         $form->text('name', '标签名');
-        //$form->hidden('operate_id')->value(Admin::user()->id);
+        $form->hidden('operate_id')->value(Admin::user()->id);
         $form->tools(function (Form\Tools $tools) {
             // 去掉`列表`按钮
             $tools->disableList();
@@ -97,6 +104,7 @@ class TagController extends AdminController
 
         $form->display('id', __('ID'));
         $form->display('name','标签名');
+        $form->hidden('operate_id')->value(Admin::user()->id);
         $form->tools(function (Form\Tools $tools) {
             // 去掉`列表`按钮
             $tools->disableList();
