@@ -27,7 +27,7 @@ class AccountStatisticController extends AdminController
     protected function grid()
     {
         $grid = new Grid(new AccountStatisticModel());
-        $grid->model()->orderBy('created_at', 'desc')->whereBetween('created_at',
+        $grid->model()->orderBy('id', 'desc')->whereBetween('created_at',
             [Carbon::parse('2 days ago')->toDateString(), Carbon::parse('today')->toDateString()]);
 
         $grid->column('id', __('ID'))->sortable();
