@@ -6,6 +6,7 @@ use App\Admin\Extensions\RestartAllTask;
 use App\Admin\Extensions\StopTask;
 use App\Helper\tool;
 use App\Model\AccountRoleModel;
+use App\Model\AdminUserModel;
 use App\Model\TaskModel;
 use App\Model\VideoModel;
 use Carbon\Carbon;
@@ -91,6 +92,10 @@ EOF;
         });
         $grid->column('time', '采集间隔时间');
         $grid->column('account', 'yutuber账号')->style('width:200px');
+        $grid->column('operate_id', '操作人')->display(function ($id) {
+            $a = AdminUserModel::where('id',$id)->first();
+            return "<div title={$a->username} style='width:70px;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;'>$a->username</div>";
+        });
         $grid->column('created_at', '创建时间');
         $grid->column('updated_at', '修改时间');
 
