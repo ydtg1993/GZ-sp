@@ -29,6 +29,12 @@ class AccountController extends AdminController
     public function index(Content $content)
     {
         $grid = new Grid(new AccountModel());
+        $U = AccountRoleModel::where('user_id',Admin::user()->id)->first();
+        if($U->role_id > 1){
+            $grid->model()->where('operate_id',Admin::user()->id);
+        }else{
+            $grid->model();
+        }
         $grid->column('id', __('ID'))->sortable();
         $grid->column('name','账户名');
         $grid->column('app_id');
