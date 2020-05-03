@@ -33,7 +33,7 @@ class AccountController extends AdminController
         if($U->role_id > 1){
             $grid->model()->where('operate_id',Admin::user()->id);
         }else{
-            $grid->model()->where(['id','!=',121]);
+            $grid->model()->where('id','!=',121);
         }
         $grid->column('id', __('ID'))->sortable();
         $grid->column('name','账户名');
