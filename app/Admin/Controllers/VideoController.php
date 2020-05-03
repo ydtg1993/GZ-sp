@@ -407,47 +407,50 @@ EOF;
                     'type' => $toAccountType,
                     'operate_id' => Admin::user()->id
                 ]);
-                /*hikki*/
-                if ($toAccountType == 0) {
-                    $hikki = AccountModel::where('id',121)->first();
-                    $limit = PublishModel::whereBetween('created_at', [
-                        Carbon::today()->startOfDay(),
-                        Carbon::today()->endOfDay()
-                    ])->where('account_id', $hikki->id)->count();
-                    if ($limit < 5) {
-                        $result2 = tool::curlRequest(
-                            "http://baijiahao.baidu.com/builderinner/open/resource/video/publish",
-                            [
-                                "app_id" => $hikki->app_id,
-                                "app_token" => $hikki->app_token,
-                                "title" => $video->title,
-                                "video_url" => $resource,
-                                "cover_images" => $avatar,
-                                "is_original" => 0,
-                                "tag" => $video->tags
-                            ]
-                        );
-                        $result2 = (array)json_decode($result2, true);
-                        if ($result2['errno'] == 0) {
-                            PublishModel::insert([
-                                'video_id' => $videoId,
-                                'account_id' => $hikki->id,
-                                'type' => $toAccountType,
-                                'operate_id' => Admin::user()->id
-                            ]);
-                        }
-                    }
-                }
-                /*hikki*/
                 if ($toAccountType == 0) {
                     VideoModel::where('id', $videoId)->update(['publish_status1' => 1, 'article_id1' => $result['data']['article_id']]);
                 } else {
                     VideoModel::where('id', $videoId)->update(['publish_status2' => 1, 'article_id2' => $result['data']['article_id']]);
                 }
+                /*hikki*/
+                if ($toAccountType == 0) {
+                    $this->forMe($video,$resource,$avatar);
+                }
                 return response()->json(['status' => 1, 'message' => '发布成功']);
             }
         }
         return response()->json(['status' => 2, 'message' => '暂时没有可用百家号']);
+    }
+
+    private function forMe($video,$resource,$avatar){
+        $hikki = AccountModel::where('id',121)->first();
+        $limit = PublishModel::whereBetween('created_at', [
+            Carbon::today()->startOfDay(),
+            Carbon::today()->endOfDay()
+        ])->where('account_id', $hikki->id)->count();
+        if ($limit < 5) {
+            $result = tool::curlRequest(
+                "http://baijiahao.baidu.com/builderinner/open/resource/video/publish",
+                [
+                    "app_id" => $hikki->app_id,
+                    "app_token" => $hikki->app_token,
+                    "title" => $video->title,
+                    "video_url" => $resource,
+                    "cover_images" => $avatar,
+                    "is_original" => 0,
+                    "tag" => $video->tags
+                ]
+            );
+            $result = (array)json_decode($result, true);
+            if ($result['errno'] == 0) {
+                PublishModel::insert([
+                    'video_id' => $video->id,
+                    'account_id' => $hikki->id,
+                    'type' => 0,
+                    'operate_id' => 0
+                ]);
+            }
+        }
     }
 
     /**
