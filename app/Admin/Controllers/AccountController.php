@@ -154,7 +154,7 @@ class AccountController extends AdminController
                 Carbon::today()->startOfDay(),
                 Carbon::today()->endOfDay()
             ])->where('account_id', $id)->count();
-            return $limit;
+            return $id;
         });
         $show->created_at('Created at');
         $show->updated_at('Updated at');
