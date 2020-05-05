@@ -149,12 +149,12 @@ class AccountController extends AdminController
         $show = new Show(AccountModel::findOrFail($id));
 
         $show->id('ID');
-        $show->limit('当天限制次数')->as(function ($id) {
+        $show->limit('当天限制次数')->as(function ()use($id) {
             $limit = PublishModel::whereBetween('created_at', [
                 Carbon::today()->startOfDay(),
                 Carbon::today()->endOfDay()
             ])->where('account_id', $id)->count();
-            return $id;
+            return $limit;
         });
         $show->created_at('Created at');
         $show->updated_at('Updated at');
