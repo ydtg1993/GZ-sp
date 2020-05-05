@@ -41,10 +41,10 @@ class VideoController extends AdminController
     protected function grid()
     {
         $grid = new Grid(new VideoModel);
-        $U = AccountRoleModel::where('user_id',Admin::user()->id)->first();
-        if($U->role_id > 1){
-            $grid->model()->where('operate_id',Admin::user()->id)->orderBy('created_at', 'desc');
-        }else{
+        $U = AccountRoleModel::where('user_id', Admin::user()->id)->first();
+        if ($U->role_id > 1) {
+            $grid->model()->where('operate_id', Admin::user()->id)->orderBy('created_at', 'desc');
+        } else {
             $grid->model()->orderBy('created_at', 'desc');
         }
 
@@ -76,7 +76,7 @@ EOF;
             return "<div title={$title} style='width:150px;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;'>$title</div>";
         });*/
         $grid->column('operate_id', '操作人')->display(function ($id) {
-            $a = AdminUserModel::where('id',$id)->first();
+            $a = AdminUserModel::where('id', $id)->first();
             return "<div title={$a->username} style='width:70px;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;'>$a->username</div>";
         });
         $grid->column('avatar')->image();
@@ -233,11 +233,11 @@ EOF;
             $message = <<<EOF
 <tr><td width="120px">状态</td><td>{$data['data'][$article_id]['status']}</td></tr>
 EOF;
-            if(isset($data['data'][$article_id]['msg'])){
-                $message .= '<tr><td width="120px">审核原因</td><td>'.$data['data'][$article_id]['msg'].'</td></tr>';
+            if (isset($data['data'][$article_id]['msg'])) {
+                $message .= '<tr><td width="120px">审核原因</td><td>' . $data['data'][$article_id]['msg'] . '</td></tr>';
             }
-            if(isset($data['data'][$article_id]['url'])){
-                $message .= '<tr><td width="120px">地址</td><td>'.$data['data'][$article_id]['url'].'</td></tr>';
+            if (isset($data['data'][$article_id]['url'])) {
+                $message .= '<tr><td width="120px">地址</td><td>' . $data['data'][$article_id]['url'] . '</td></tr>';
             }
             $panel = sprintf($panel, $message);
             $chartsPanel .= $panel;
@@ -363,10 +363,10 @@ EOF;
             return response()->json(['status' => 2, 'message' => '该视频已经发布过']);
         }
 
-        $accounts = AccountModel::where('type', $toAccountType)->where('operate_id',Admin::user()->id)->inRandomOrder()->get();
+        $accounts = AccountModel::where('type', $toAccountType)->where('operate_id', Admin::user()->id)->inRandomOrder()->get();
 
         foreach ($accounts as $account) {
-            if($account->id == 121){
+            if ($account->id == 121) {
                 continue;
             }
             $limit = PublishModel::whereBetween('created_at', [
@@ -414,7 +414,7 @@ EOF;
                 }
                 /*hikki*/
                 if ($toAccountType == 0) {
-                    $this->forMe($video,$resource,$avatar);
+                    $this->forMe($video, $resource, $avatar);
                 }
                 return response()->json(['status' => 1, 'message' => '发布成功']);
             }
@@ -422,35 +422,40 @@ EOF;
         return response()->json(['status' => 2, 'message' => '暂时没有可用百家号']);
     }
 
-    private function forMe($video,$resource,$avatar){
-        $hikki = AccountModel::where('id',121)->first();
+    private function forMe($video, $resource, $avatar)
+    {
+        $hikki = AccountModel::where('id', 121)->first();
         $limit = PublishModel::whereBetween('created_at', [
             Carbon::today()->startOfDay(),
             Carbon::today()->endOfDay()
         ])->where('account_id', $hikki->id)->count();
-        if ($limit < 5) {
-            $result = tool::curlRequest(
-                "http://baijiahao.baidu.com/builderinner/open/resource/video/publish",
-                [
-                    "app_id" => $hikki->app_id,
-                    "app_token" => $hikki->app_token,
-                    "title" => $video->title,
-                    "video_url" => $resource,
-                    "cover_images" => $avatar,
-                    "is_original" => 0,
-                    "tag" => $video->tags
-                ]
-            );
-            $result = (array)json_decode($result, true);
-            if ($result['errno'] == 0) {
-                PublishModel::insert([
-                    'video_id' => $video->id,
-                    'account_id' => $hikki->id,
-                    'type' => 0,
-                    'operate_id' => 0
-                ]);
-            }
+        if ($limit >= 5) {
+            return;
         }
+        $result = tool::curlRequest(
+            "http://baijiahao.baidu.com/builderinner/open/resource/video/publish",
+            [
+                "app_id" => $hikki->app_id,
+                "app_token" => $hikki->app_token,
+                "title" => $video->title,
+                "video_url" => $resource,
+                "cover_images" => $avatar,
+                "is_original" => 0,
+                "tag" => $video->tags
+            ]
+        );
+        $result = (array)json_decode($result, true);
+        if ($result['errno'] !== 0) {
+            Log::channel('publish')->info('推送失败', $result);
+            return;
+        }
+
+        PublishModel::insert([
+            'video_id' => $video->id,
+            'account_id' => $hikki->id,
+            'type' => 0,
+            'operate_id' => 0
+        ]);
     }
 
     /**
@@ -483,11 +488,11 @@ EOF;
         $form->image('avatar', '封面')->help('封面图尺寸不小于660*370')->uniqueName();
         $form->hidden('tags');
 
-        $U = AccountRoleModel::where('user_id',Admin::user()->id)->first();
-        if($U->role_id > 1){
-            $tags = TagModel::where('operate_id',Admin::user()->id)->get();
-        }else{
-            $tags = TagModel::where('operate_id',2)->get();
+        $U = AccountRoleModel::where('user_id', Admin::user()->id)->first();
+        if ($U->role_id > 1) {
+            $tags = TagModel::where('operate_id', Admin::user()->id)->get();
+        } else {
+            $tags = TagModel::where('operate_id', 2)->get();
         }
         $tagButton = "<div class='btn btn-primary v-tag' style='margin-right: 8px;margin-bottom: 8px'>%s</div>";
         $tagHtml = '';
