@@ -75,12 +75,12 @@ class Statistics extends Command
             $account_id = $datum['account_id'];
             $account_key = $account_id.':';
             if(isset($accountStatistic[$account_key])){
-                $accountStatistic[$account_key]['recommend_count']+=  self::checkNum($d['data']['recommend_count']);
-                $accountStatistic[$account_key]['comment_count']+=  self::checkNum($d['data']['comment_count']);
-                $accountStatistic[$account_key]['view_count']+=  self::checkNum($d['data']['view_count']);
-                $accountStatistic[$account_key]['share_count']+=  self::checkNum($d['data']['share_count']);
-                $accountStatistic[$account_key]['collect_count']+=  self::checkNum($d['data']['collect_count']);
-                $accountStatistic[$account_key]['likes_count']+=  self::checkNum($d['data']['likes_count']);
+                $accountStatistic[$account_key]['recommend_count']+=  $datum['recommend_count'];
+                $accountStatistic[$account_key]['comment_count']+=  $datum['comment_count'];
+                $accountStatistic[$account_key]['view_count']+=  $datum['view_count'];
+                $accountStatistic[$account_key]['share_count']+=  $datum['share_count'];
+                $accountStatistic[$account_key]['collect_count']+=  $datum['collect_count'];
+                $accountStatistic[$account_key]['likes_count']+=  $datum['likes_count'];
             }
         }
         AccountStatisticModel::insert($accountStatistic);
