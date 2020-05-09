@@ -50,28 +50,39 @@ class Statistics extends Command
         ini_set('memory_limit', '4096M');
         $this->today = date('Y-m-d');
         $check = VideoStatisticModel::whereBetween('created_at',[
-            date('Y-m-d 00:00:00', time()),$todayEnd= date('Y-m-d 23:59:59', time())])->first();
+            date('Y-m-d 00:00:00', strtotime("-1 day")),date('Y-m-d 23:59:59', strtotime("-1 day"))])->first();
+
         if($check){
             die('已经统计！');
         }
 
         $accounts = $this->getAccounts();
 
-        $total = PublishModel::count();
-        $limit = 1000;
-        $page = ceil($total / $limit);
-
+        $publishes = PublishModel::whereBetween('created_at',[
+            date('Y-m-d 00:00:00', strtotime("-1 day")),date('Y-m-d 23:59:59', strtotime("-1 day"))])->get();
+        $publishes = $publishes->toArray();
         $statistic = [];
         $accountStatistic = [];
 
-        for ($i = 0; $i <= $page; $i++) {
-            $start = $i * $limit;
-            $publishes = PublishModel::offset($start)->limit($limit)->get();
-            $publishes = $publishes->toArray();
-
-            $this->deal($publishes, $accounts, $statistic,$accountStatistic);
-        }
+        $this->deal($publishes, $accounts, $statistic,$accountStatistic);
         VideoStatisticModel::insert($statistic);
+        $base_data = AccountStatisticModel::whereBetween('created_at',[
+            date('Y-m-d 00:00:00', strtotime("-2 day")),
+            date('Y-m-d 23:59:59', strtotime("-2 day"))
+        ])->get();
+        $base_data = $base_data->toArray();
+        foreach ($base_data as $datum){
+            $account_id = $datum['account_id'];
+            $account_key = $account_id.':';
+            if(isset($accountStatistic[$account_key])){
+                $accountStatistic[$account_key]['recommend_count']+=  self::checkNum($d['data']['recommend_count']);
+                $accountStatistic[$account_key]['comment_count']+=  self::checkNum($d['data']['comment_count']);
+                $accountStatistic[$account_key]['view_count']+=  self::checkNum($d['data']['view_count']);
+                $accountStatistic[$account_key]['share_count']+=  self::checkNum($d['data']['share_count']);
+                $accountStatistic[$account_key]['collect_count']+=  self::checkNum($d['data']['collect_count']);
+                $accountStatistic[$account_key]['likes_count']+=  self::checkNum($d['data']['likes_count']);
+            }
+        }
         AccountStatisticModel::insert($accountStatistic);
     }
 
