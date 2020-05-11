@@ -47,7 +47,7 @@ class Statistics extends Command
      */
     public function handle()
     {
-        ini_set('memory_limit', '10000M');
+        ini_set('memory_limit', '2046M');
         ob_start();
         $this->today = date('Y-m-d');
         $check = VideoStatisticModel::whereBetween('created_at',[
@@ -124,7 +124,7 @@ class Statistics extends Command
                 $data['likes_count'] == 0) {
                 continue;
             }
-            $statistic[] = $data;
+            //$statistic[] = $data;
             /*account statistic*/
             $account_key = $account_id.':';
             if(!isset($accountStatistic[$account_key])){
