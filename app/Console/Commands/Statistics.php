@@ -47,7 +47,7 @@ class Statistics extends Command
      */
     public function handle()
     {
-        ini_set('memory_limit', '4096M');
+        ini_set('memory_limit', '10000M');
         $this->today = date('Y-m-d');
         $check = VideoStatisticModel::whereBetween('created_at',[
             date('Y-m-d 00:00:00', time()),$todayEnd= date('Y-m-d 23:59:59', time())])->first();
