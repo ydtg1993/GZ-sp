@@ -79,7 +79,7 @@ class Statistics extends Command
             ob_flush();
             flush();
         }
-        VideoStatisticModel::insert($statistic);
+        //VideoStatisticModel::insert($statistic);
         AccountStatisticModel::insert($accountStatistic);
     }
 
