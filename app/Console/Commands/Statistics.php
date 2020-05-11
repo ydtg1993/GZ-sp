@@ -64,12 +64,19 @@ class Statistics extends Command
         $statistic = [];
         $accountStatistic = [];
 
+        echo "总数:".$page.PHP_EOL;
+        ob_flush();
+        flush();
+
         for ($i = 0; $i <= $page; $i++) {
             $start = $i * $limit;
             $publishes = PublishModel::offset($start)->limit($limit)->get();
             $publishes = $publishes->toArray();
 
             $this->deal($publishes, $accounts, $statistic,$accountStatistic);
+            echo $i.PHP_EOL;
+            ob_flush();
+            flush();
         }
         VideoStatisticModel::insert($statistic);
         AccountStatisticModel::insert($accountStatistic);
