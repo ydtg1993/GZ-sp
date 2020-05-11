@@ -176,11 +176,11 @@ class Statistics extends Command
             $i++;
             $data = (array)json_decode($result, true);
             if (!isset($data['errno'])) {
-                usleep(500000);
+                //usleep(500000);
                 continue;
             }
             if (isset($data['errno']) && $data['errno'] != 0) {
-                usleep(500000);
+                //usleep(500000);
                 continue;
             }
             return $data;
