@@ -26,12 +26,7 @@ class TagController extends AdminController
     public function index(Content $content)
     {
         $grid = new Grid(new TagModel());
-        $U = AccountRoleModel::where('user_id',Admin::user()->id)->first();
-        if($U->role_id > 1){
-            $grid->model()->where('operate_id',Admin::user()->id);
-        }else{
-            $grid->model()->where('operate_id',2);
-        }
+        $grid->model()->where('operate_id',Admin::user()->id);
         $grid->column('id', __('ID'))->sortable();
         $grid->column('name','标签名');
 
