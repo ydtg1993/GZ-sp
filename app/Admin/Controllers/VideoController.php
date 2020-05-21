@@ -487,13 +487,8 @@ EOF;
         $form->text('title', '标题')->help($help);
         $form->image('avatar', '封面')->help('封面图尺寸不小于660*370')->uniqueName();
         $form->hidden('tags');
-
-        $U = AccountRoleModel::where('user_id', Admin::user()->id)->first();
-        if ($U->role_id > 1) {
-            $tags = TagModel::where('operate_id', Admin::user()->id)->get();
-        } else {
-            $tags = TagModel::where('operate_id', 2)->get();
-        }
+        
+        $tags = TagModel::where('operate_id', Admin::user()->id)->get();
         $tagButton = "<div class='btn btn-primary v-tag' style='margin-right: 8px;margin-bottom: 8px'>%s</div>";
         $tagHtml = '';
         foreach ($tags as $tag) {
