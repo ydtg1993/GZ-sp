@@ -479,15 +479,35 @@ EOF;
         });
         $form->display('id', __('ID'));
         $help = "视频标题，限定 8-40 个中英文字符以内";
+        $url = '';
+        $img = "<img width='300px' src='{$url}' />";
         if ($id) {
             $video = VideoModel::where('id', $id)->first();
             $len = mb_strlen($video->title);
             $help = "视频标题，限定 8-40 个中英文字符以内 当前长度({$len})";
+
+            $avatar = $video->avatar;
+            if (preg_match("/^http.*/", $avatar)) {
+                $url = $avatar;
+            } else {
+                $url = config('app.url') . '/upload/' . $avatar;
+            }
         }
         $form->text('title', '标题')->help($help);
         $form->image('avatar', '封面')->help('封面图尺寸不小于660*370')->uniqueName();
+        $form->image()->unescape()->as(function ($avatar) {
+            if (preg_match("/^http.*/", $avatar)) {
+                $url = $avatar;
+            } else {
+                $url = config('app.url') . '/upload/' . $avatar;
+            }
+            $url = '';
+            $img = "<img width='300px' src='{$url}' />";
+        });
+
+        $form->html($img, '封面');
         $form->hidden('tags');
-        
+
         $tags = TagModel::where('operate_id', Admin::user()->id)->get();
         $tagButton = "<div class='btn btn-primary v-tag' style='margin-right: 8px;margin-bottom: 8px'>%s</div>";
         $tagHtml = '';
