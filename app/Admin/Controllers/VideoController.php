@@ -492,19 +492,10 @@ EOF;
             } else {
                 $url = config('app.url') . '/upload/' . $avatar;
             }
+            $img = "<img width='300px' src='{$url}' />";
         }
         $form->text('title', '标题')->help($help);
-        $form->image('avatar', '封面')->help('封面图尺寸不小于660*370')->uniqueName();
-        $form->image()->unescape()->as(function ($avatar) {
-            if (preg_match("/^http.*/", $avatar)) {
-                $url = $avatar;
-            } else {
-                $url = config('app.url') . '/upload/' . $avatar;
-            }
-            $url = '';
-            $img = "<img width='300px' src='{$url}' />";
-        });
-
+        //$form->image('avatar', '封面')->help('封面图尺寸不小于660*370')->uniqueName();
         $form->html($img, '封面');
         $form->hidden('tags');
 
