@@ -271,6 +271,8 @@ EOF;
         $form->number('mark_height', '水印高')->min(0)->default(0);
         $form->number('mark_x', '水印横坐标X')->min(0)->default(0);
         $form->number('mark_y', '水印纵坐标Y')->min(0)->default(0);
+        $form->number('mark_start', '水印开始时间')->min(0)->default(15);
+        $form->number('mark_duration', '持续时间')->min(0)->default(15);
 
         $form->display('created_at', __('Created At'));
         $form->display('updated_at', __('Updated At'));
