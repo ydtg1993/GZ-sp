@@ -283,14 +283,14 @@ EOF;
 </div>
 <script>
     $('#cut_time_m').change(function() {
-      var m = $('#cut_time_m').val()
-      var s = $('#cut_time_s').val()
+      var m = parseInt($('#cut_time_m').val())
+      var s = parseInt($('#cut_time_s').val())
       var t = m*60 + s;
       $('.cut_time').val(t)
     });
     $('#cut_time_s').change(function() {
-      var m = $('#cut_time_m').val()
-      var s = $('#cut_time_s').val()
+      var m = parseInt($('#cut_time_m').val())
+      var s = parseInt($('#cut_time_s').val())
       var t = m*60 + s;
       $('.cut_time').val(t)
     });
