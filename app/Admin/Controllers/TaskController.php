@@ -225,12 +225,6 @@ EOF;
         $form->ignore('category');
         $form->saving(function (Form $form){
             $urls = explode(PHP_EOL,$form->url);
-            /*foreach ($urls as $url) {
-                $check = TaskModel::where('url', $url)->first();
-                if ($check) {
-                    throw new \Exception('目标地址重复{'.$url.'} 已有相同任务在运行');
-                }
-            }*/
             $form->url = join(";",$urls);
         });
         $form->saved(function (Form $form) {
@@ -251,7 +245,33 @@ EOF;
         $form->textarea('url', '目标地址 多个换行表示');
         $form->number('time', '采集任务间隔时间(小时)')->min(1)->default(1);
         $form->divider('视频切割');
-        $form->number('cut_time', '切割时间(分钟)')->min(1)->default(3);
+        //$form->number('cut_time', '切割时间(分钟)')->min(1)->default(3);
+        $html = <<<EOF
+<div class="form-group">
+<div class="col-sm-4">
+            <input min="1" oninput="value=value.replace(/[^\d]/g,'')" style="width: 100px;float:left;text-align: center;" type="text" id="cut_time_m" name="cut_time_m" value="3" class="form-control" placeholder="切割时间(分)">
+            <span style="float: left">分</span>
+            <input min="0" max="59" oninput="value=value.replace(/[^\d]/g,'');if(value>59)value=59" style="width: 100px;float:left;text-align: center;" type="text" id="cut_time_s" name="cut_time_s" value="0" class="form-control" placeholder="切割时间(秒)">
+            <span style="float: left">秒</span>
+</div>
+</div>
+<script>
+    $('#cut_time_m').change(function() {
+      var m = $('#cut_time_m').val()
+      var s = $('#cut_time_s').val()
+      var t = m*60 + s;
+      $('.cut_time').val(t)
+    });
+    $('#cut_time_s').change(function() {
+      var m = $('#cut_time_m').val()
+      var s = $('#cut_time_s').val()
+      var t = m*60 + s;
+      $('.cut_time').val(t)
+    });
+</script>
+EOF;
+        $form->html($html,'切割时间');
+        $form->hidden('cut_time');
 
         $form->divider('插入开始短片');
         $form->file('op_video', '开始短片')->uniqueName();
