@@ -297,7 +297,7 @@ EOF;
 </script>
 EOF;
         $form->html($html,'切割时间');
-        $form->hidden('cut_time');
+        $form->hidden('cut_time')->default(180);
 
         $form->divider('插入开始短片');
         $form->file('op_video', '开始短片')->uniqueName();
