@@ -180,6 +180,7 @@ EOF;
         $form->number('time', '采集任务间隔时间(小时)')->min(1)->default(1);
         $form->divider('视频切割');
         //$form->number('cut_time', '切割时间(分钟)')->min(1)->default(3);
+        $task = TaskModel::where('id',$id)->first();
         $html = <<<EOF
 <div class="form-group">
 <div class="col-sm-4">
@@ -201,6 +202,14 @@ EOF;
       var s = $('#cut_time_s').val()
       var t = m*60 + s;
       $('.cut_time').val(t)
+    });
+    $(function() {
+      var cut_time = {$task->cut_time}
+      cut_time = parseInt(cut_time)
+      var s = cut_time % 60
+      var m = (cut_time - s) / 60
+      $('#cut_time_m').val(m)
+      $('#cut_time_s').val(s)
     });
 </script>
 EOF;
