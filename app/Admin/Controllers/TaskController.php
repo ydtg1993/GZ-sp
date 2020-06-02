@@ -176,7 +176,7 @@ EOF;
         $form->display('id', __('ID'));
         $form->select('task_type', '任务类型')->options([0 => '单个视频', 1 => '定时任务'])->readonly();
         $form->display('account', 'yutuber账户');
-        $form->display('url', '目标地址');
+        $form->textarea('url', '目标地址')->readonly();
         $form->number('time', '采集任务间隔时间(小时)')->min(1)->default(1);
         $form->divider('视频切割');
         //$form->number('cut_time', '切割时间(分钟)')->min(1)->default(3);
