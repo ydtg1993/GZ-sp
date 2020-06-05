@@ -231,8 +231,8 @@ EOF;
         $form->divider('视频加入水印');
         $form->image('mark', '水印图片')->uniqueName();
 
-        $form->hidden('mark_width', '水印宽')->min(0)->default(0);
-        $form->hidden('mark_height', '水印高')->min(0)->default(0);
+        $form->hidden('mark_width', '水印宽')->default(0);
+        $form->hidden('mark_height', '水印高')->default(0);
 
         $form->number('mark_x', '水印横坐标X')->min(0)->default(0);
         $form->number('mark_y', '水印纵坐标Y')->min(0)->default(0);
@@ -325,9 +325,9 @@ EOF;
         $form->divider('视频加入水印');
         $form->image('mark', '水印图片')->uniqueName();
 
-        $form->hidden('mark_width', '水印宽')->min(0)->default(0);
-        $form->hidden('mark_height', '水印高')->min(0)->default(0);
-        
+        $form->hidden('mark_width', '水印宽')->default(0);
+        $form->hidden('mark_height', '水印高')->default(0);
+
         $form->number('mark_x', '水印横坐标X')->min(0)->default(0);
         $form->number('mark_y', '水印纵坐标Y')->min(0)->default(0);
         $form->number('mark_start', '水印开始时间')->min(0)->default(15);
