@@ -225,7 +225,7 @@ class UploadController extends AdminController
         $form->hidden('task_type', '任务类型')->default(2);
 
         $form->text('video.title','标题');
-        $form->file('video.resource', '视频')->uniqueName();
+        $form->file('video.resource', '视频')->uniqueName()->help('文件大小300M以内');
         $form->hidden('video.author','作者')->default(Admin::user()->username);
 
         $form->divider('插入开始短片');
