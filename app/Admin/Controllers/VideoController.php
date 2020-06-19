@@ -98,7 +98,7 @@ EOF;
             if ($this->resource_status == 1) {
                 return '已删除';
             }
-            if(preg_match('/^file.*/')){
+            if(preg_match('/^file.*/',$resource)){
                 $source = config('app.url') . '/upload/' . $resource;
             }else {
                 $source = config('app.url') . '/' . $resource;
@@ -285,7 +285,7 @@ EOF;
         });
         $show->tags('标签');
         $show->resource('原视频')->unescape()->as(function ($resource) {
-            if(preg_match('/^file.*/')){
+            if(preg_match('/^file.*/',$resource)){
                 $source = config('app.url') . '/upload/' . $resource;
             }else {
                 $source = config('app.url') . '/' . $resource;
@@ -383,16 +383,18 @@ EOF;
             ])->where('account_id', $account->id)->count();
             if ($limit < 5) {
                 $video = VideoModel::where('id', $videoId)->first();
-                if(preg_match('/^file.*/')){
+
+                if(preg_match('/^file.*/',$video->resource)){
                     $dir = '/upload/';
                 }else{
                     $dir = '/';
                 }
-
                 $resource = config('app.url') . $dir . $video->resource;
+
                 if ($toAccountType == 1) {
-                    $resource = config('app.url') . $dir . $video->resource2;
+                    $resource = config('app.url') . '/' . $video->resource2;
                 }
+                
                 if (preg_match("/^http.*/", $video->avatar)) {
                     $avatar = $video->avatar;
                 } else {
