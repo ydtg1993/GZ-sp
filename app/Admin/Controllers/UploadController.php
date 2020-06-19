@@ -146,6 +146,7 @@ class UploadController extends AdminController
         $form->saved(function (Form $form) {
             $id = $form->model()->id;
             $v = VideoModel::where('task_id',$id)->first();
+            VideoModel::where('id',$v->id)->update(['resource','upload/'.$v->resource]);
             $result = tool::curlRequest(config('app.url') . ":8002/api/video/upload/", json_encode([
                 'task_id' => $id,
                 'video_id' => $v->id
