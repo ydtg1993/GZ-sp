@@ -1,3 +1,4 @@
+set-ExecutionPolicy RemoteSigned
 @echo off
 powershell -c "Get-Content -LiteralPath '%~0' | Select-Object -Skip 3 | Out-String | Invoke-Expression" 
 pause&exit
